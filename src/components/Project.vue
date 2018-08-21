@@ -1,0 +1,1476 @@
+<template>
+	<div v-loading='loading'>
+		<div class="title">
+			项目管理
+		</div>
+		<div>
+			<div class="panel">
+				<div class="panel-heading clearfix">
+					<button class="btn fl Green mini" @click="adds">新建项目</button>
+					<div class="search clearfix fr">
+						<el-input v-model="search" placeholder="请输入单位名称，项目级别，所属行业，或其他关键词"></el-input>
+						<button class="btn Info mini" @click='filter' style="margin-bottom: 2px;">查询</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel">
+			<el-table :data="tableData5" :expand-row-keys="expands" :row-key="getRowKeys" stripe style="width: 100%" @expand-change='expand'>
+				<el-table-column type="expand">
+					<template slot-scope="scope">
+						<el-tabs v-model="activeName" @tab-click="handleClick">
+							<el-tab-pane label="联系人" name="first">
+								<el-form ref="formLabelAlign" :model="formLabelAlign" label-width="200px" class='Owners'>
+									<el-form-item label="责任管理部门项目负责人" class='fl w50'>
+										<el-input v-model="scope.row.Project_Contacts.SitePrincipal" placeholder="责任管理部门项目负责人" style="width:250px;"></el-input>
+									</el-form-item>
+									<el-form-item label="责任管理部门项目负责人电话" class='fr w50'>
+										<el-input v-model="scope.row.Project_Contacts.SitePrincipalTEL" placeholder="责任管理部门项目负责人电话" style="width:250px;"></el-input>
+									</el-form-item>
+									<el-form-item label="责任管理单位具体负责人" class='fl w50'>
+										<el-input v-model="scope.row.Project_Contacts.SiteLink" placeholder="责任管理单位具体负责人" style="width:250px;"></el-input>
+									</el-form-item>
+									<el-form-item label="责任管理单位具体负责人电话" class='fr w50'>
+										<el-input v-model="scope.row.Project_Contacts.SiteLinkTEL" placeholder="责任管理单位具体负责人电话" style="width:250px;"></el-input>
+									</el-form-item>
+									<el-form-item label="业主单位项目负责人" class='fl w50'>
+										<el-input v-model="scope.row.Project_Contacts.Handler" placeholder="业主单位项目负责人" style="width:250px;"></el-input>
+									</el-form-item>
+									<el-form-item label="业主单位项目负责人电话" class='fr w50'>
+										<el-input v-model="scope.row.Project_Contacts.HandlerTEL" placeholder="业主单位项目负责人电话" style="width:250px;"></el-input>
+									</el-form-item>
+									<el-form-item label="业主分管领导" class='fl w50'>
+										<el-input v-model="scope.row.Project_Contacts.Principal" placeholder="请输入分管领导" style="width:250px;"></el-input>
+									</el-form-item>
+									<el-form-item label="业主分管领导电话" class='fr w50'>
+										<el-input v-model="scope.row.Project_Contacts.PrincipalTEL" placeholder="请输入分管领导电话" style="width:250px;"></el-input>
+									</el-form-item>
+									<el-form-item label="业主主要领导" class='fl w50'>
+										<el-input v-model="scope.row.Project_Contacts.Leader" placeholder="请输入主要领导" style="width:250px;"></el-input>
+									</el-form-item>
+									<el-form-item label="业主主要领导电话" class='fr w50'>
+										<el-input v-model="scope.row.Project_Contacts.LeaderTEL" placeholder="请输入主要领导电话" style="width:250px;"></el-input>
+									</el-form-item>
+									<el-button type="primary" size="small" class='fr' @click='bclxr'>保存</el-button>
+								</el-form>
+
+							</el-tab-pane>
+							<el-tab-pane label="进度计划" name="second">
+								<el-form ref="plan" :model="plan" label-width="240px" class='Owners'>
+									<el-form-item label="《规划选址及用地意见书》批复：" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_GHXZYDJYJSPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_GHXZYDJYJSPF" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+									<el-form-item label="农转用手续及供地批复" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_LZYSXJGDPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_LZYSXJGDPF" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+
+									<el-form-item label="土地出让合同" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_TDCRHT" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_TDCRHT" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+									<el-form-item label="土地使用权证" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_TDSYQZ" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_TDSYQZ" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+									<el-form-item label="《工程可行性研究报告+》批复" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_GCKXXYJBGPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_GCKXXYJBGPF" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+									<el-form-item label="《建设用地规划许可证》批复" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_JSYDGHXKZPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_JSYDGHXKZPF" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+
+									<el-form-item label="地勘报告完成" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_DKBGWC" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_DKBGWC" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+									<el-form-item label="初步设计及概算批复" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_CBSJJGSPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_CBSJJGSPF" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+									<el-form-item label="施工图编制和审查" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_SGTBZHSC" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_SGTBZHSC" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+									<el-form-item label="预算编制完成" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_YSBZWC" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_YSBZWC" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+									<el-form-item label="《财审控制价》批复" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_CSKZJPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_CSKZJPF" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+									<el-form-item label="施工监理招投标（含预公告）" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_SGJLZTP" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_SGJLZTP" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+									<el-form-item label="项目开工" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_XMKG" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_XMKG" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+									<el-form-item label="《建设工程规划许可证》批复" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_JSGCGHXKZPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_JSGCGHXKZPF" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+									<el-form-item label="施工监理人员备案" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_SGJLRYBA" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_SGJLRYBA" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+									<el-form-item label="《施工许可证》批复" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_SGXKZPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_SGXKZPF" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+									<el-form-item label="项目总平设计方案批复" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[0].Point_XMZPSJFAPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="计划完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[0].Point_XMZPSJFAPF" style="color: red;">保存后不得更改</span>
+									</el-form-item>
+								</el-form>
+								<el-button type="primary" size="small" class='fr' @click='bcjh()'>保存</el-button>
+							</el-tab-pane>
+							<el-tab-pane label="计划执行" name="third">
+								<el-form ref="plan" :model="plan" label-width="240px" class='Owners clearfix'>
+									<el-form-item label="《规划选址及用地意见书》批复：" class='fl w50'>
+										<el-date-picker  v-model="scope.row.Project_Schedule[1].Point_GHXZYDJYJSPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_GHXZYDJYJSPF" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_GHXZJYDYJSMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_GHXZYDJYJSPF" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,13,scope.row.Project_Schedule[1].Point_GHXZYDJYJSPF,scope.row.Project_Schedule[1].Point_GHXZJYDYJSMemo)'>保存</el-button>
+									</el-form-item>
+									<el-form-item label="农转用手续及供地批复" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_LZYSXJGDPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_LZYSXJGDPF" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_LZYSXJGDMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_LZYSXJGDPF" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,14,scope.row.Project_Schedule[1].Point_LZYSXJGDPF,scope.row.Project_Schedule[1].Point_LZYSXJGDMemo)'>保存</el-button>
+									</el-form-item>
+
+									<el-form-item label="土地出让合同" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_TDCRHT" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_TDCRHT" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_TDCRHTMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_TDCRHT" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,15,scope.row.Project_Schedule[1].Point_TDCRHT,scope.row.Project_Schedule[1].Point_TDCRHTMemo)'>保存</el-button>
+									</el-form-item>
+									<el-form-item label="土地使用权证" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_TDSYQZ" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_TDSYQZ" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_TDSYQZMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_TDSYQZ" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,16,scope.row.Project_Schedule[1].Point_TDSYQZ,scope.row.Project_Schedule[1].Point_TDSYQZMemo)'>保存</el-button>
+									</el-form-item>
+									<el-form-item label="《工程可行性研究报告+》批复" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_GCKXXYJBGPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_GCKXXYJBGPF" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_GCKXXYJBGMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_GCKXXYJBGPF" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,1,scope.row.Project_Schedule[1].Point_GCKXXYJBGPF,scope.row.Project_Schedule[1].Point_GCKXXYJBGMemo)'>保存</el-button>
+									</el-form-item>
+									<el-form-item label="《建设用地规划许可证》批复" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_JSYDGHXKZPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_JSYDGHXKZPF" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_JSYDGHXKZMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_JSYDGHXKZPF" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,2,scope.row.Project_Schedule[1].Point_JSYDGHXKZPF,scope.row.Project_Schedule[1].Point_JSYDGHXKZMemo)'>保存</el-button>
+									</el-form-item>
+
+									<el-form-item label="地勘报告完成" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_DKBGWC" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_DKBGWC" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_DKBGWCMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_DKBGWC" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,3,scope.row.Project_Schedule[1].Point_DKBGWC,scope.row.Project_Schedule[1].Point_DKBGWCMemo)'>保存</el-button>
+									</el-form-item>
+									<el-form-item label="初步设计及概算批复" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_CBSJJGSPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_CBSJJGSPF" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_CBSJJGSMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_CBSJJGSPF" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,4,scope.row.Project_Schedule[1].Point_CBSJJGSPF,scope.row.Project_Schedule[1].Point_CBSJJGSMemo)'>保存</el-button>
+									</el-form-item>
+									<el-form-item label="施工图编制和审查" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_SGTBZHSC" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_SGTBZHSC" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_SGTBZHSCMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_SGTBZHSC" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,5,scope.row.Project_Schedule[1].Point_SGTBZHSC,scope.row.Project_Schedule[1].Point_SGTBZHSCMemo)'>保存</el-button>
+									</el-form-item>
+									<el-form-item label="预算编制完成" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_YSBZWC" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_YSBZWC" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_YSBZWCMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_YSBZWC" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,6,scope.row.Project_Schedule[1].Point_YSBZWC,scope.row.Project_Schedule[1].Point_YSBZWCMemo)'>保存</el-button>
+									</el-form-item>
+									<el-form-item label="《财审控制价》批复" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_CSKZJPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_CSKZJPF" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_CSKZJMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_CSKZJPF" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,7,scope.row.Project_Schedule[1].Point_CSKZJPF,scope.row.Project_Schedule[1].Point_CSKZJMemo)'>保存</el-button>
+									</el-form-item>
+									<el-form-item label="施工监理招投标（含预公告）" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_SGJLZTP" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_SGJLZTP" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_SGJLZTPMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_SGJLZTP" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,8,scope.row.Project_Schedule[1].Point_SGJLZTP,scope.row.Project_Schedule[1].Point_SGJLZTPMemo)'>保存</el-button>
+									</el-form-item>
+									<el-form-item label="项目开工" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_XMKG" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_XMKG" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_XMKGMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_XMKG" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,9,scope.row.Project_Schedule[1].Point_XMKG,scope.row.Project_Schedule[1].Point_XMKGMemo)'>保存</el-button>
+									</el-form-item>
+									<el-form-item label="《建设工程规划许可证》批复" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_JSGCGHXKZPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_JSGCGHXKZPF" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_JSGSGHXKZMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_JSGCGHXKZPF" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,10,scope.row.Project_Schedule[1].Point_JSGCGHXKZPF,scope.row.Project_Schedule[1].Point_JSGSGHXKZMemo)'>保存</el-button>
+									</el-form-item>
+									<el-form-item label="施工监理人员备案" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_SGJLRYBA" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_SGJLRYBA" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_SGJLRYBAMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_SGJLRYBA" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,11,scope.row.Project_Schedule[1].Point_SGJLRYBA,scope.row.Project_Schedule[1].Point_SGJLRYBAMemo)'>保存</el-button>
+									</el-form-item>
+									<el-form-item label="《施工许可证》批复" class='fr w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_SGXKZPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_SGXKZPF" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_SGXKZMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_SGXKZPF" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,12,scope.row.Project_Schedule[1].Point_SGXKZPF,scope.row.Project_Schedule[1].Point_SGXKZMemo)'>保存</el-button>
+									</el-form-item>
+									<el-form-item label="项目总平设计方案批复" class='fl w50'>
+										<el-date-picker v-model="scope.row.Project_Schedule[1].Point_XMZPSJFAPF" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="实际完成日期">
+										</el-date-picker><span v-if="scope.row.Project_Schedule[1].Point_XMZPSJFAPF" style="color: red;">保存后不得更改</span>
+										<el-input style='width: 220px; display: block; margin-top: 10px;' v-model="scope.row.Project_Schedule[1].Point_XMZPSJFAMemo" placeholder=""></el-input>
+										<el-button type="primary" style='width: 220px; display: block; margin-top: 15px;padding: 12px 20px;' :disabled="!scope.row.EditTable.Point_XMZPSJFAPF" size="mini" class='fl' @click='bczx(scope.row.Project_Info.ID,scope.row.Project_Schedule[1].ID,17,scope.row.Project_Schedule[1].Point_XMZPSJFAPF,scope.row.Project_Schedule[1].Point_XMZPSJFAMemo)'>保存</el-button>
+									</el-form-item>
+								</el-form>
+							</el-tab-pane>
+							<el-tab-pane label="问题列表" name="fourth">
+								<el-table :data="qustionList" height="250">
+									<el-table-column label="问题内容" prop="IssueContent">
+									</el-table-column>
+									<el-table-column label="发布日期">
+										<template slot-scope='scope'>
+											{{scope.row.CreateDate|yy}}
+										</template>
+									</el-table-column>
+									<el-table-column label="发布人" prop="CreateMan">
+									</el-table-column>
+									<el-table-column label="操作">
+										<template slot-scope="scope">
+											<el-button type="primary" size="mini" @click='logEdits(scope.row.ID,scope.row.ProjectID,scope.row.IssueContent)'>修改</el-button>
+											<el-button type="danger" size="mini" @click='delquick(scope.row.ID)'>删除</el-button>
+										</template>
+									</el-table-column>
+
+								</el-table>
+							</el-tab-pane>
+							<el-tab-pane label="日志" name="five">
+								<el-table :data="logList" height="250">
+									<el-table-column label="操作时间">
+										<template slot-scope='scope'>
+											{{scope.row.CreateDate|yy}}
+										</template>
+									</el-table-column>
+									<el-table-column label="操作人" prop="CreateMan">
+									</el-table-column>
+									<el-table-column label="操作内容" prop="LogContent">
+									</el-table-column>
+								</el-table>
+							</el-tab-pane>
+						</el-tabs>
+					</template>
+				</el-table-column>
+				<el-table-column label="项目名称" prop="Project_Info.ProjectName">
+				</el-table-column>
+				<el-table-column label="业主单位" prop="OwnerStr">
+				</el-table-column>
+				<el-table-column label="项目级别" prop="ProJLeveStr">
+				</el-table-column>
+				<el-table-column label="所属行业" prop="ProjStr">
+				</el-table-column>
+				<el-table-column label="开工日期" prop="">
+					<template slot-scope='scope'>
+						{{scope.row.Project_Info.ComemenceDate|yy}}
+					</template>
+				</el-table-column>
+				<el-table-column label="计划投资" prop="Project_Info.InvestMoney">
+				</el-table-column>
+				<el-table-column label="第一季度投资" prop="Project_Info.Q1Invest">
+				</el-table-column>
+				<el-table-column label="第二季度投资" prop="Project_Info.Q2Invest">
+				</el-table-column>
+				<el-table-column label="第三季度投资" prop="Project_Info.Q3Invest">
+				</el-table-column>
+				<el-table-column label="第四季度投资" prop="Project_Info.Q4Invest">
+				</el-table-column>
+				<el-table-column label="创建人" prop="Project_Info.CreateMan">
+				</el-table-column>
+				<el-table-column label="创建日期" prop="Project_Info.CreateDate">
+					<template slot-scope='scope'>
+						{{scope.row.Project_Info.CreateDate|yy}}
+					</template>
+				</el-table-column>
+				<el-table-column label="状态" prop="StateStr">
+				</el-table-column>
+				<el-table-column label="操作">
+					<template slot-scope="scope">
+						<el-dropdown size="small" trigger="click" type="primary">
+							<el-button type="primary" size="small" class="Info">
+								操&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 作<i class="el-icon-arrow-down el-icon--right"></i>
+							</el-button>
+							<el-dropdown-menu slot="dropdown">
+								<el-dropdown-item v-if='Check&&scope.row.Project_Info.State==2||scope.row.Project_Info.State==5'>
+									<button class="btn Success mini" @click="stateset(scope.row.Project_Info.ID,1)">审核通过</button>
+								</el-dropdown-item>
+								<el-dropdown-item v-if='scope.row.Project_Info.State==1'>
+									<button class="btn Success mini" @click="stateset(scope.row.Project_Info.ID,6)">申请修改</button>
+								</el-dropdown-item>
+								<el-dropdown-item v-if="Check&&scope.row.Project_Info.State==6">
+									<button class="btn Pink mini" @click="stateset(scope.row.Project_Info.ID,3)">审批通过</button>
+								</el-dropdown-item>
+								<el-dropdown-item v-if='Check&&scope.row.Project_Info.State==3'>
+									<button class="btn Purple mini" @click="stateset(scope.row.Project_Info.ID,5)">提交审批</button>
+								</el-dropdown-item>
+								<el-dropdown-item v-if='scope.row.Project_Info.State==3'>
+									<button class="btn Pink mini" @click="xiugai(scope.row.Project_Info)">修&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 改</button>
+								</el-dropdown-item>
+								
+								<el-dropdown-item v-if='Start'>
+									<button class="btn Danger mini" @click="stateset(scope.row.Project_Info.ID,4)">开&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 工</button>
+								</el-dropdown-item>
+
+								<el-dropdown-item>
+									<button class="btn Green mini" @click="followUp(scope.row.Project_Info.ID,scope.row.Project_Info.Q1Invest,scope.row.Project_Info.Q2Invest,scope.row.Project_Info.Q3Invest,scope.row.Project_Info.Q4Invest,scope.row.Project_Info.Q1Memo,scope.row.Project_Info.Q2Memo,scope.row.Project_Info.Q3Memo,scope.row.Project_Info.Q4Memo)">后续计划</button>
+								</el-dropdown-item>
+								<el-dropdown-item>
+									<button class="btn Info mini" @click="fnResetPwdTip(scope.row.Project_Info.ID)">问题发布</button>
+								</el-dropdown-item>
+							</el-dropdown-menu>
+						</el-dropdown>
+					</template>
+				</el-table-column>
+			</el-table>
+			<div class="pages">
+				<el-pagination @size-change="handleSizeChange" :page-sizes="[10,20,30,40,50]" :page-size="pagesizs" :current-page="pages" @current-change="handleCurrentChange" layout="sizes,prev, pager, next" :total="total" background>
+				</el-pagination>
+			</div>
+		</div>
+		<el-dialog title="项目新建" :visible.sync="add" width="860px">
+			<el-tabs v-model="aitives" @tab-click="handleClick">
+				<el-tab-pane label="项目信息" name="1">
+					<el-form ref="project" :model="project" label-width="100px" class='Owners'>
+						<el-form-item label="项目名称" class='fl w50'>
+							<el-input v-model="project.names" placeholder="请输入项目名称" style="width:250px;"></el-input>
+						</el-form-item>
+						<el-form-item label="项目级别" class='fl w50'>
+							<el-select v-model="project.value" placeholder="请选择" style="width:250px;">
+								<el-option v-for="item in options" :key="item.ID" :label="item.DictName" :value="item.ID">
+								</el-option>
+							</el-select>
+						</el-form-item>
+						<el-form-item label="业主单位" class='fl w50'>
+							<el-select v-model="project.value1" placeholder="请选择" style="width:250px;">
+								<el-option v-for="item in options1" :key="item.ID" :label="item.OwnerName" :value="item.ID">
+								</el-option>
+							</el-select>
+						</el-form-item>
+						<el-form-item label="所属行业" class='fl w50'>
+							<el-select v-model="project.value2" placeholder="请选择" style="width:250px;">
+								<el-option v-for="item in options2" :key="item.ID" :label="item.DictName" :value="item.ID">
+								</el-option>
+							</el-select>
+						</el-form-item>
+						<el-form-item label="计划投资" class='fl w50'>
+							<el-input v-model="project.jhtz" placeholder="请输入金额" style="width:220px;"></el-input><span>万元</span>
+						</el-form-item>
+						<el-form-item label="开工日期" class='fl w50'>
+							<el-date-picker v-model="project.dates" style="width:250px;" type="date" placeholder="选择日期">
+							</el-date-picker>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+				<el-tab-pane label="进度计划" name="2">
+					<el-form ref="plan" :model="plan" label-width="240px" class='Owners'>
+						<el-form-item label="《规划选址及用地意见书》批复：" class='fl w50'>
+							<el-date-picker v-model="plan.Point_GHXZYDJYJSPF" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+						<el-form-item label="农转用手续及供地批复" class='fr w50'>
+							<el-date-picker v-model="plan.Point_LZYSXJGDPF" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+
+						<el-form-item label="土地出让合同" class='fl w50'>
+							<el-date-picker v-model="plan.Point_TDCRHT" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+						<el-form-item label="土地使用权证" class='fr w50'>
+							<el-date-picker v-model="plan.Point_TDSYQZ" type="date" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+						<el-form-item label="《工程可行性研究报告+》批复" class='fl w50'>
+							<el-date-picker v-model="plan.Point_GCKXXYJBGPF" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+						<el-form-item label="《建设用地规划许可证》批复" class='fr w50'>
+							<el-date-picker v-model="plan.Point_JSYDGHXKZPF" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+
+						<el-form-item label="地勘报告完成" class='fl w50'>
+							<el-date-picker v-model="plan.Point_DKBGWC" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+						<el-form-item label="初步设计及概算批复" class='fr w50'>
+							<el-date-picker v-model="plan.Point_CBSJJGSPF" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+						<el-form-item label="施工图编制和审查" class='fl w50'>
+							<el-date-picker v-model="plan.Point_SGTBZHSC" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+						<el-form-item label="预算编制完成" class='fr w50'>
+							<el-date-picker v-model="plan.Point_YSBZWC" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+						<el-form-item label="《财审控制价》批复" class='fl w50'>
+							<el-date-picker v-model="plan.Point_CSKZJPF" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+						<el-form-item label="施工监理招投标（含预公告）" class='fr w50'>
+							<el-date-picker v-model="plan.Point_SGJLZTP" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+						<el-form-item label="项目开工" class='fl w50'>
+							<el-date-picker v-model="plan.Point_XMKG" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+						<el-form-item label="《建设工程规划许可证》批复" class='fr w50'>
+							<el-date-picker v-model="plan.Point_JSGCGHXKZPF" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+						<el-form-item label="施工监理人员备案" class='fl w50'>
+							<el-date-picker v-model="plan.Point_SGJLRYBA" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+						<el-form-item label="《施工许可证》批复" class='fr w50'>
+							<el-date-picker v-model="plan.Point_SGXKZPF" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+						<el-form-item label="项目总平设计方案批复" class='fl w50'>
+							<el-date-picker v-model="plan.Point_XMZPSJFAPF" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" style="width:150px;">
+							</el-date-picker>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+				<el-tab-pane label="联系人" name="3">
+					<el-form ref="formLabelAlign" :model="formLabelAlign" label-width="200px" class='Owners'>
+						<el-form-item label="责任管理部门项目负责人" class='fl w50'>
+							<el-input v-model="formLabelAlign.preside" placeholder="责任管理部门项目负责人" style="width:200px;"></el-input>
+						</el-form-item>
+						<el-form-item label="责任管理部门项目负责人电话" class='fr w50'>
+							<el-input v-model="formLabelAlign.fTel" placeholder="责任管理部门项目负责人电话" style="width:200px;"></el-input>
+						</el-form-item>
+						<el-form-item label="责任管理单位具体负责人" class='fl w50'>
+							<el-input v-model="formLabelAlign.pxLinks" placeholder="责任管理单位具体负责人" style="width:200px;"></el-input>
+						</el-form-item>
+						<el-form-item label="责任管理单位具体负责人电话" class='fr w50'>
+							<el-input v-model="formLabelAlign.pxLinksTel" placeholder="责任管理单位具体负责人电话" style="width:200px;"></el-input>
+						</el-form-item>
+						<el-form-item label="业主单位项目负责人" class='fl w50'>
+							<el-input v-model="formLabelAlign.Agent" placeholder="业主单位项目负责人" style="width:200px;"></el-input>
+						</el-form-item>
+						<el-form-item label="业主单位项目负责人电话" class='fr w50'>
+							<el-input v-model="formLabelAlign.AgenTel" placeholder="业主单位项目负责人电话" style="width:200px;"></el-input>
+						</el-form-item>
+						<el-form-item label="业主分管领导" class='fl w50'>
+							<el-input v-model="formLabelAlign.leader" placeholder="请输入分管领导" style="width:200px;"></el-input>
+						</el-form-item>
+						<el-form-item label="业主分管领导电话" class='fr w50'>
+							<el-input v-model="formLabelAlign.leaderTel" placeholder="请输入分管领导电话" style="width:200px;"></el-input>
+						</el-form-item>
+						<el-form-item label="业主主要领导" class='fl w50'>
+							<el-input v-model="formLabelAlign.fugle" placeholder="请输入主要领导" style="width:200px;"></el-input>
+						</el-form-item>
+						<el-form-item label="业主主要领导电话" class='fr w50'>
+							<el-input v-model="formLabelAlign.fugleTel" placeholder="请输入主要领导电话" style="width:200px;"></el-input>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+			</el-tabs>
+			<span slot="footer" class="dialog-footer">
+			<el-button size="small" @click="add = false">取 消</el-button>
+			<el-button size="small" type="primary" @click="confirm()">保 存</el-button>
+		</span>
+		</el-dialog>
+		<el-dialog title="问题发布" :visible.sync="qus" width="424px">
+			<el-form ref="formLabelAlign" :model="formLabelAlign" label-width="60px" class='Owners'>
+				<el-form-item label="问题：">
+					<el-input v-model="qustions" type='textarea' placeholder="请输入问题" :rows="2" style="width:320px;"></el-input>
+				</el-form-item>
+			</el-form>
+			<span slot="footer" class="dialog-footer">
+			<el-button size="small" @click="qus = false">取 消</el-button>
+			<el-button size="small" type="primary" @click="reset()">确 定</el-button>
+		</span>
+		</el-dialog>
+		<el-dialog title="问题修改" :visible.sync="logs" width="424px">
+			<el-form ref="formLabelAlign" :model="formLabelAlign" label-width="60px" class='Owners'>
+				<el-form-item label="问题：">
+					<el-input v-model="qustions" type='textarea' placeholder="请输入问题" :rows="2" style="width:320px;"></el-input>
+				</el-form-item>
+			</el-form>
+			<span slot="footer" class="dialog-footer">
+			<el-button size="small" @click="logs = false">取 消</el-button>
+			<el-button size="small" type="primary" @click="edit()">确 定</el-button>
+		</span>
+		</el-dialog>
+		<el-dialog title="后续计划" :visible.sync="ups" width="424px" class='eld'>
+			<el-tabs v-model="activeName11">
+				<el-tab-pane label="第一季度" name="first">
+					<el-form ref="follow" :model="follow" label-width="80px" class='Owners'>
+						<el-form-item label="完成投资">
+							<el-input v-model="follow.money1" placeholder="请输入金额" style="width:264px;"></el-input><span style="margin-left: 5px;">万元</span>
+						</el-form-item>
+						<el-form-item label="形象进度" class='clearfix'>
+							<el-input v-model="follow.Speed1" placeholder="" type="textarea" style="width:304px;"></el-input>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+				<el-tab-pane label="第二季度" name="second">
+					<el-form ref="follow" :model="follow" label-width="80px" class='Owners'>
+						<el-form-item label="完成投资">
+							<el-input v-model="follow.money2" placeholder="请输入金额" style="width:264px;"></el-input><span style="margin-left: 5px;">万元</span>
+						</el-form-item>
+						<el-form-item label="形象进度" class='clearfix'>
+							<el-input v-model="follow.Speed2" placeholder="" type="textarea" style="width:304px;"></el-input>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+				<el-tab-pane label="第三季度" name="third">
+					<el-form ref="follow" :model="follow" label-width="80px" class='Owners'>
+						<el-form-item label="完成投资">
+							<el-input v-model="follow.money3" placeholder="请输入金额" style="width:264px;"></el-input><span style="margin-left: 5px;">万元</span>
+						</el-form-item>
+						<el-form-item label="形象进度" class='clearfix'>
+							<el-input v-model="follow.Speed3" placeholder="" type="textarea" style="width:304px;"></el-input>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+				<el-tab-pane label="第四季度" name="fourth">
+					<el-form ref="follow" :model="follow" label-width="80px" class='Owners'>
+						<el-form-item label="完成投资">
+							<el-input v-model="follow.money4" placeholder="请输入金额" style="width:264px;"></el-input><span style="margin-left: 5px;">万元</span>
+						</el-form-item>
+						<el-form-item label="形象进度" class='clearfix'>
+							<el-input v-model="follow.Speed4" placeholder="" type="textarea" style="width:304px;"></el-input>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+			</el-tabs>
+
+			<span slot="footer" class="dialog-footer">
+			<el-button size="small" @click="ups = false">取 消</el-button>
+			<el-button size="small" type="primary" @click="DetePlan()">确 定</el-button>
+		</span>
+		</el-dialog>
+		<el-dialog title="项目信息" :visible.sync="xm" width="424px">
+			<el-form ref="follow" :model="follow" label-width="80px" class='Owners'>
+				<el-form ref="project" :model="project" label-width="100px" class='Owners'>
+					<el-form-item label="项目名称">
+						<el-input v-model="project.names" placeholder="请输入项目名称" style="width:250px;"></el-input>
+					</el-form-item>
+					<el-form-item label="项目级别">
+						<el-select v-model="project.value" placeholder="请选择" style="width:250px;">
+							<el-option v-for="item in options" :key="item.ID" :label="item.DictName" :value="item.ID">
+							</el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="业主单位">
+						<el-select v-model="project.value1" placeholder="请选择" style="width:250px;">
+							<el-option v-for="item in options1" :key="item.ID" :label="item.OwnerName" :value="item.ID">
+							</el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="所属行业">
+						<el-select v-model="project.value2" placeholder="请选择" style="width:250px;">
+							<el-option v-for="item in options2" :key="item.ID" :label="item.DictName" :value="item.ID">
+							</el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="计划投资">
+						<el-input v-model="project.jhtz" placeholder="请输入金额" style="width:220px;"></el-input><span>万元</span>
+					</el-form-item>
+					<el-form-item label="开工日期">
+						<el-date-picker format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" v-model="project.dates" style="width:250px;" type="date" placeholder="选择日期">
+						</el-date-picker>
+					</el-form-item>
+				</el-form>
+			</el-form>
+			<span slot="footer" class="dialog-footer">
+			<el-button size="small" @click="xm = false">取 消</el-button>
+			<el-button size="small" type="primary" @click="qrxg()">确 定</el-button>
+		</span>
+		</el-dialog>
+	</div>
+</template>
+<script>
+	import Api from "../axios/api";
+	export default {
+		name: 'Project',
+		data() {
+			return {
+				activeName11: 'first',
+				xm: false,
+				logList: [], //日志列表
+				qustionList: [],
+				qustions: '', //问题
+				qus: false, //问题发布
+				aitives: '1',
+				activeName: 'first',
+				tableData5: [],
+				search: '', //搜索
+				add: false, //新建弹框
+				formLabelAlign: {
+					preside: '', //片区负责人
+					fTel: '', //片区负责人电话
+					pxLinks: '', //片区联系人
+					pxLinksTel: '', //片区联系人电话
+					Agent: '', //经办人
+					AgenTel: "", //经办人电话
+					leader: '', //领导人
+					leaderTel: '', //领导人电话
+					fugle: '', //主要领导
+					fugleTel: '', //主要领导电话
+				}, //联系人
+				plan: {
+					Point_GCKXXYJBGPF: '', //
+					Point_JSYDGHXKZPF: '', //
+					Point_DKBGWC: '', //
+					Point_CBSJJGSPF: '', //
+					Point_SGTBZHSC: '', //
+					Point_YSBZWC: "", //
+					Point_CSKZJPF: '', //
+					Point_SGJLZTP: '', //
+					Point_XMKG: '', //
+					Point_JSGCGHXKZPF: '', //
+					Point_SGJLRYBA: '',
+					Point_SGXKZPF: '',
+					Point_GHXZYDJYJSPF: '',
+					Point_LZYSXJGDPF: '',
+					Point_TDCRHT: '',
+					Point_TDSYQZ: '',
+					Point_XMZPSJFAPF: '',
+				}, //进度计划
+				project: {
+					names: '', //项目名称
+					value: '', //级别
+					value1: '', //单位
+					value2: '', //行业
+					jhtz: '', //计划投资
+					dates: '' //时间
+				}, //项目信息
+				options: [{
+					value: '1',
+					label: '区级重点'
+				}, {
+					value: '2',
+					label: '片区重点'
+				}], //级别
+				options1: [], //单位
+				options2: [{
+					value: '1',
+					label: '交通'
+				}, {
+					value: '2',
+					label: '生态保护'
+				}, {
+					value: '3',
+					label: '农林水利'
+				}, {
+					value: '4',
+					label: '产业发展'
+				}, {
+					value: '5',
+					label: '城乡建设'
+				}, {
+					value: '6',
+					label: '社会事业'
+				}], //行业
+				logs: false, //日志
+				getRowKeys(row) {
+					return row.Project_Info.ID;
+				},
+				expands: [],
+				pagesizs: 10, //每页显示多少条
+				total: 1, //总条数
+				pages: 1, //页码
+				ups: false, //后续弹框
+				follow: {
+					money1: '', //金额
+					Speed1: '', //进度
+					money2: '', //金额
+					Speed2: '', //进度
+					money3: '', //金额
+					Speed4: '', //进度
+					money4: '', //金额
+					Speed4: '', //进度
+				}, //后续计划
+				optionsdata: [{
+					value: 1,
+					label: '第一季度'
+				}, {
+					value: 2,
+					label: '第二季度'
+				}, {
+					value: 3,
+					label: '第三季度'
+				}, {
+					value: 4,
+					label: '第四季度'
+				}],
+				loading: false,
+				rows: {},
+				jhrow: [],
+				id: '',
+				pid: '',
+				Check: false,
+				jihua:[],
+				Start:false
+			}
+		},
+		created() {
+			this.Check = sessionStorage.Check === 'false' ? false : true
+			this.Start = sessionStorage.Start === 'true' ? true : false
+			this.Selector()
+			this.dicSelector()
+			this.dicSelector1()
+			this.getlist(this.pagesizs, this.pages, this.search)
+		},
+		methods: {
+			//
+			change(e, val, ValidityState) {
+				console.log(e.target)
+				console.log(val)
+				console.log(ValidityState)
+				ValidityState = ''
+			},
+			change1(val, event,dd) {
+				console.log(val)
+				console.log(event)
+				event = ''
+				console.log(dd)
+			},
+			//保存执行
+			bczx(id, pid, type, value, menu) {
+				console.log(pid)
+				if(value == null && menu == null) {
+					this.$message({
+						message: '参数不能为空',
+						type: 'warning'
+					});
+					return false
+				}
+				console.log(value)
+				console.log(menu)
+				if(value != null && menu != null && value != '' && menu != '') {
+					this.$message({
+						message: '时间备注不能同时拥有',
+						type: 'warning'
+					});
+					return
+				}
+				this.$post(Api.editschedule, {
+					"ID": pid,
+					"ProjectID": id,
+					"Quarter": type,
+					"Value": value,
+					"Memo": menu
+				}).then(res => {
+					console.log(res)
+					if(res.state == 200) {
+						this.expands = []
+						this.qustionList = []
+						this.logList = []
+						this.jhrow = []
+						this.rows = {}
+						this.loading = false
+						this.pages = 1
+						this.search == ''
+						this.getlist(this.pagesizs, this.pages, this.search)
+					} else {
+						this.loading = false
+						this.$message.error(res.errmsg);
+					}
+				})
+			},
+			//修改进度计划
+			bcjh() {
+				this.loading = true
+				this.$post(Api.editsch, {
+					"ID": this.jhrow[0].ID,
+					"ProjectID": this.jhrow[0].ProjectID,
+					"ScheduleType": 1,
+					"Point_GCKXXYJBGPF": this.jhrow[0].Point_GCKXXYJBGPF,
+					"Point_JSYDGHXKZPF": this.jhrow[0].Point_JSYDGHXKZPF,
+					"Point_DKBGWC": this.jhrow[0].Point_DKBGWC,
+					"Point_CBSJJGSPF": this.jhrow[0].Point_CBSJJGSPF,
+					"Point_SGTBZHSC": this.jhrow[0].Point_SGTBZHSC,
+					"Point_YSBZWC": this.jhrow[0].Point_YSBZWC,
+					"Point_CSKZJPF": this.jhrow[0].Point_CSKZJPF,
+					"Point_SGJLZTP": this.jhrow[0].Point_SGJLZTP,
+					"Point_XMKG": this.jhrow[0].Point_XMKG,
+					"Point_JSGCGHXKZPF": this.jhrow[0].Point_JSGCGHXKZPF,
+					"Point_SGJLRYBA": this.jhrow[0].Point_SGJLRYBA,
+					"Point_SGXKZPF": this.jhrow[0].Point_SGXKZPF,
+					"Point_GHXZYDJYJSPF": this.jhrow[0].Point_GHXZYDJYJSPF,
+					"Point_LZYSXJGDPF": this.jhrow[0].Point_LZYSXJGDPF,
+					"Point_TDCRHT": this.jhrow[0].Point_TDCRHT,
+					"Point_TDSYQZ": this.jhrow[0].Point_TDSYQZ,
+					"Point_XMZPSJFAPF": this.jhrow[0].Point_XMZPSJFAPF,
+					"Point_GHXZJYDYJSMemo": "",
+					"Point_LZYSXJGDMemo": "",
+					"Point_TDCRHTMemo": "",
+					"Point_TDSYQZMemo": "",
+					"Point_XMZPSJFAMemo": "",
+					"Point_GCKXXYJBGMemo": "",
+					"Point_JSYDGHXKZMemo": "",
+					"Point_DKBGWCMemo": "",
+					"Point_CBSJJGSMemo": "",
+					"Point_SGTBZHSCMemo": "",
+					"Point_YSBZWCMemo": "",
+					"Point_CSKZJMemo": "",
+					"Point_SGJLZTPMemo": "",
+					"Point_XMKGMemo": "",
+					"Point_JSGSGHXKZMemo": "",
+					"Point_SGJLRYBAMemo": "",
+					"Point_SGXKZMemo": ""
+				}).then(res => {
+					console.log(res)
+					if(res.state == 200) {
+						this.expands = []
+						this.qustionList = []
+						this.logList = []
+						this.jhrow = []
+						this.rows = {}
+						this.loading = false
+						this.pages = 1
+						this.search == ''
+						this.getlist(this.pagesizs, this.pages, this.search)
+					} else {
+						this.loading = false
+						this.$message.error(res.errmsg);
+					}
+				})
+			},
+			//修改联系人保存
+			bclxr() {
+				console.log(this.rows)
+				//				for(let k in this.rows) {
+				//					if(this.rows[k] == '') {
+				//						this.$message({
+				//							message: '联系人参数不能为空',
+				//							type: 'warning'
+				//						});
+				//						return
+				//					}
+				//				}
+				if(this.rows.SitePrincipalTEL != '') {
+					if(!this.$isTel(this.rows.SitePrincipalTEL)) {
+						this.$message({
+							message: '请输入正确的片区负责人电话',
+							type: 'warning'
+						});
+						return
+					}
+				}
+				if(this.rows.SiteLinkTEL != '') {
+					if(!this.$isTel(this.rows.SiteLinkTEL)) {
+						this.$message({
+							message: '请输入正确的片区联系人电话',
+							type: 'warning'
+						});
+						return
+					}
+				}
+				if(this.rows.HandlerTEL != '') {
+					if(!this.$isTel(this.rows.HandlerTEL)) {
+						this.$message({
+							message: '请输入正确的经办人电话',
+							type: 'warning'
+						});
+						return
+					}
+				}
+				if(this.rows.LeaderTEL != '') {
+					if(!this.$isTel(this.rows.LeaderTEL)) {
+						this.$message({
+							message: '请输入主要领导电话',
+							type: 'warning'
+						});
+						return
+					}
+				}
+
+				this.loading = true
+				this.$post(Api.conedit, {
+					"ID": this.rows.ID,
+					"ProjectID": this.rows.ProjectID,
+					"SitePrincipal": this.rows.SitePrincipal,
+					"SitePrincipalTEL": this.rows.SitePrincipalTEL,
+					"SiteLink": this.rows.SiteLink,
+					"SiteLinkTEL": this.rows.SiteLinkTEL,
+					"Handler": this.rows.Handler,
+					"HandlerTEL": this.rows.HandlerTEL,
+					"Principal": this.rows.Principal,
+					"PrincipalTEL": this.rows.PrincipalTEL,
+					"Leader": this.rows.Leader,
+					"LeaderTEL": this.rows.LeaderTEL
+				}).then(res => {
+					console.log(res)
+					if(res.state == 200) {
+						this.expands = []
+						this.qustionList = []
+						this.logList = []
+						this.jhrow = []
+						this.rows = {}
+						this.loading = false
+						this.pages = 1
+						this.search == ''
+						this.getlist(this.pagesizs, this.pages, this.search)
+					} else {
+						this.loading = false
+						this.$message.error(res.errmsg);
+					}
+				})
+			},
+			//获取业主单位
+			Selector() {
+				this.$get(Api.Selector).then(res => {
+					if(res.data.state == 200) {
+						this.options1 = res.data.data
+					} else {
+						this.$message.error(res.data.errmsg);
+					}
+				})
+			},
+			//获取项目级别
+			dicSelector() {
+				this.$get(Api.dicSelector + '/' + 1).then(res => {
+					if(res.data.state == 200) {
+						this.options = res.data.data
+					} else {
+						this.$message.error(res.data.errmsg);
+					}
+				})
+			},
+			//获取项目行业
+			dicSelector1() {
+				this.$get(Api.dicSelector + '/' + 2).then(res => {
+					console.log(res)
+					if(res.data.state == 200) {
+						this.options2 = res.data.data
+						console.log(this.options2)
+					} else {
+						this.$message.error(res.data.errmsg);
+					}
+				})
+			},
+			//获取项目列表
+			getlist(pagesizs, pages, search) {
+				this.loading = true
+				this.$post(Api.progetlist, {
+					"PageSize": pagesizs,
+					"PageIndex": pages - 1,
+					"KeyWord": search,
+					"Query": search,
+					"OrderString": "",
+					"ToExcel": false
+				}).then(res => {
+					console.log(res)
+					if(res.state == 200) {
+						this.loading = false
+						this.tableData5 = res.data.Data
+						this.total = res.data.Items ? res.data.Items : 1;
+					} else {
+						this.loading = false
+						this.$message.error(res.errmsg);
+					}
+				})
+			},
+			expand(row) {
+				this.activeName = 'first'
+				this.qustionList = row.Project_Issue
+				this.jhrow = row.Project_Schedule
+				this.rows = row.Project_Contacts
+				this.logList = row.Project_Log
+				if(row.Project_Info.ID == this.expands[0]) {
+					this.expands = []
+					this.qustionList = []
+					this.logList = []
+					this.jhrow = []
+					this.rows = {}
+					return
+				}
+				this.expands = [];
+				this.qustionList = []
+				this.logList = []
+				this.rows = {}
+				this.jhrow = []
+				this.rows = row.Project_Contacts
+				this.qustionList = row.Project_Issue
+				this.logList = row.Project_Log
+				this.jhrow = row.Project_Schedule
+				this.expands.push(row.Project_Info.ID);
+			},
+			handleClick(tab, event) {
+
+				//				console.log(tab, event);
+			},
+			//添加弹框
+			adds() {
+				//联系人
+				for(let k in this.formLabelAlign) {
+					this.formLabelAlign[k] = ''
+				}
+				//计划进度
+				for(let k in this.plan) {
+					this.plan[k] = ''
+				}
+				//项目信息
+				for(let k in this.project) {
+					this.project[k] = ''
+				}
+				this.add = true
+			},
+			//确认新建
+			confirm() {
+				for(let k in this.project) {
+					if(this.project[k] == '') {
+						this.$message({
+							message: '项目信息参数不能为空',
+							type: 'warning'
+						});
+						return
+					}
+				}
+				//				for(let k in this.formLabelAlign) {
+				//					if(this.formLabelAlign[k] == '') {
+				//						this.$message({
+				//							message: '联系人参数不能为空',
+				//							type: 'warning'
+				//						});
+				//						return
+				//					}
+				//				}
+				if(this.formLabelAlign.fTel != '') {
+					if(!this.$isTel(this.formLabelAlign.fTel)) {
+						this.$message({
+							message: '请输入正确的片区负责人电话',
+							type: 'warning'
+						});
+						return
+					}
+				}
+				if(this.formLabelAlign.pxLinksTel != '') {
+					if(!this.$isTel(this.formLabelAlign.pxLinksTel)) {
+						this.$message({
+							message: '请输入正确的片区联系人电话',
+							type: 'warning'
+						});
+						return
+					}
+				}
+				if(this.formLabelAlign.AgenTel != '') {
+					if(!this.$isTel(this.formLabelAlign.AgenTel)) {
+						this.$message({
+							message: '请输入正确的经办人电话',
+							type: 'warning'
+						});
+						return
+					}
+				}
+				if(this.formLabelAlign.leaderTel != '') {
+					if(!this.$isTel(this.formLabelAlign.leaderTel)) {
+						this.$message({
+							message: '请输入正确的分管领导电话',
+							type: 'warning'
+						});
+						return
+					}
+				}
+				if(this.formLabelAlign.fugleTel != '') {
+					if(!this.$isTel(this.formLabelAlign.fugleTel)) {
+						this.$message({
+							message: '请输入正确的主要领导电话',
+							type: 'warning'
+						});
+						return
+					}
+				}
+
+				this.loading = true
+				this.$post(Api.proaddnew, {
+					"ProjectInfo": {
+						"ProjectName": this.project.names, //项目名称
+						"OwnerID": this.project.value1, //业主单位
+						"LevelID": this.project.value,
+						"IndustryID": this.project.value2,
+						"InvestMoney": this.project.jhtz,
+						"ComemenceDate": this.project.dates,
+						"Q1Invest": '',
+						"Q2Invest": '',
+						"Q3Invest": '',
+						"Q4Invest": '',
+						"Q1Memo": '',
+						"Q2Memo": '',
+						"Q3Memo": '',
+						"Q4Memo": ''
+					},
+					"Schedules": {
+						"ProjectID": '',
+						"ScheduleType": 1,
+						"Point_GCKXXYJBGPF": this.plan.Point_GCKXXYJBGPF,
+						"Point_JSYDGHXKZPF": this.plan.Point_JSYDGHXKZPF,
+						"Point_DKBGWC": this.plan.Point_DKBGWC,
+						"Point_CBSJJGSPF": this.plan.Point_CBSJJGSPF,
+						"Point_SGTBZHSC": this.plan.Point_SGTBZHSC,
+						"Point_YSBZWC": this.plan.Point_YSBZWC,
+						"Point_CSKZJPF": this.plan.Point_CSKZJPF,
+						"Point_SGJLZTP": this.plan.Point_SGJLZTP,
+						"Point_XMKG": this.plan.Point_XMKG,
+						"Point_JSGCGHXKZPF": this.plan.Point_JSGCGHXKZPF,
+						"Point_SGJLRYBA": this.plan.Point_SGJLRYBA,
+						"Point_SGXKZPF": this.plan.Point_SGXKZPF,
+						"Point_GHXZYDJYJSPF": this.plan.Point_GHXZYDJYJSPF,
+						"Point_LZYSXJGDPF": this.plan.Point_LZYSXJGDPF,
+						"Point_TDCRHT": this.plan.Point_TDCRHT,
+						"Point_TDSYQZ": this.plan.Point_TDSYQZ,
+						"Point_XMZPSJFAPF": this.plan.Point_XMZPSJFAPF,
+						"Point_GHXZJYDYJSMemo": "",
+						"Point_LZYSXJGDMemo": "",
+						"Point_TDCRHTMemo": "",
+						"Point_TDSYQZMemo": "",
+						"Point_XMZPSJFAMemo": "",
+						"Point_GCKXXYJBGMemo": "",
+						"Point_JSYDGHXKZMemo": "",
+						"Point_DKBGWCMemo": "",
+						"Point_CBSJJGSMemo": "",
+						"Point_SGTBZHSCMemo": "",
+						"Point_YSBZWCMemo": "",
+						"Point_CSKZJMemo": "",
+						"Point_SGJLZTPMemo": "",
+						"Point_XMKGMemo": "",
+						"Point_JSGSGHXKZMemo": "",
+						"Point_SGJLRYBAMemo": "",
+						"Point_SGXKZMemo": ""
+					},
+					"Contacts": {
+						"ProjectID": "",
+						"SitePrincipal": this.formLabelAlign.preside,
+						"SitePrincipalTEL": this.formLabelAlign.fTel,
+						"SiteLink": this.formLabelAlign.pxLinks,
+						"SiteLinkTEL": this.formLabelAlign.pxLinksTel,
+						"Handler": this.formLabelAlign.Agent,
+						"HandlerTEL": this.formLabelAlign.AgenTel,
+						"Principal": this.formLabelAlign.leader,
+						"PrincipalTEL": this.formLabelAlign.leaderTel,
+						"Leader": this.formLabelAlign.fugle,
+						"LeaderTEL": this.formLabelAlign.fugleTel
+					}
+				}).then(res => {
+					if(res.state == 200) {
+						this.pages = 1
+						this.add = false
+						this.loading = false
+						this.search == ''
+						this.getlist(this.pagesizs, this.pages, this.search)
+						this.$message({
+							message: "添加成功",
+							type: "success"
+						});
+					} else {
+						this.loading = false
+						this.add = false
+						this.$message.error(res.errmsg);
+					}
+				})
+				this.add = true
+			},
+			//问题发布弹框
+			fnResetPwdTip(id) {
+				this.id = id
+				this.qustions = ''
+				this.qus = true
+			},
+			//确认问题发布
+			reset() {
+				if(this.qustions == '') {
+					this.$message({
+						message: '问题不能为空',
+						type: 'warning'
+					});
+					return
+				}
+				this.loading = true
+				this.$post(Api.addiss, {
+					"ProjectID": this.id,
+					"IssueContent": this.qustions
+				}).then(res => {
+					console.log(res)
+					if(res.state == 200) {
+						this.$message({
+							message: "发布成功",
+							type: "success"
+						});
+						this.expands = []
+						this.qustionList = []
+						this.logList = []
+						this.jhrow = []
+						this.rows = {}
+						this.pages = 1
+
+						this.loading = false
+						this.search == ''
+						this.getlist(this.pagesizs, this.pages, this.search)
+					} else {
+						this.loading = false
+						this.add = false
+						this.$message.error(res.errmsg);
+					}
+				})
+				this.qus = false
+			},
+			//修改问题弹框
+			logEdits(id, pid, cont) {
+				this.id = id
+				this.pid = pid
+				this.qustions = cont
+				this.logs = true
+			},
+			//确认修改问题
+			edit() {
+				if(this.qustions == '') {
+					this.$message({
+						message: '问题不能为空',
+						type: 'warning'
+					});
+					return
+				}
+				this.loading = true
+				this.$post(Api.editiss, {
+					"ID": this.id,
+					"ProjectID": this.pid,
+					"IssueContent": this.qustions
+				}).then(res => {
+					console.log(res)
+					if(res.state == 200) {
+						this.pages = 1
+						this.$message({
+							message: "修改成功",
+							type: "success"
+						});
+						this.expands = []
+						this.qustionList = []
+						this.logList = []
+						this.jhrow = []
+						this.rows = {}
+						this.loading = false
+						this.search == ''
+						this.getlist(this.pagesizs, this.pages, this.search)
+					} else {
+						this.loading = false
+						this.add = false
+						this.$message.error(res.errmsg);
+					}
+				})
+				this.logs = false
+			},
+			//状态
+			stateset(id, type) {
+				this.$get(Api.stateset + '/' + type + '/' + id).then(res => {
+					console.log(res)
+					console.log(1)
+					if(res.data.state == 200) {
+						this.expands = []
+						this.qustionList = []
+						this.logList = []
+						this.jhrow = []
+						this.rows = {}
+						this.pages = 1
+						this.loading = false
+						this.search == ''
+						this.getlist(this.pagesizs, this.pages, this.search)
+					} else {
+						this.loading = false
+						this.$message.error(res.data.errmsg);
+					}
+				})
+			},
+			//删除问题
+			delquick(id) {
+				this.$confirm("将永久删除, 是否继续?", "提示", {
+						confirmButtonText: "确定",
+						cancelButtonText: "取消",
+						type: "warning"
+					})
+					.then(() => {
+						this.loading = true;
+						this.$get(Api.deliss + "/" + id)
+							.then(response => {
+								console.log(response)
+								if(response.data.state == 200) {
+									this.expands = []
+									this.qustionList = []
+									this.logList = []
+									this.jhrow = []
+									this.rows = {}
+									this.pages = 1
+									this.loading = false
+									this.search == ''
+									this.getlist(this.pagesizs, this.pages, this.search)
+									this.$message({
+										message: "删除成功",
+										type: "success"
+									});
+								} else {
+									this.loading = false;
+									this.$message.error(response.data.errmsg);
+								}
+							})
+							.catch(err => {
+								this.loading = false;
+							});
+					})
+					.catch(() => {
+						this.$message({
+							type: "info",
+							message: "已取消删除"
+						});
+					});
+			},
+			//后续计划弹框
+			followUp(id, q1, q2, q3, q4, m1, m2, m3, m4) {
+				this.id = id
+				this.follow.money1 = q1 //金额
+				this.follow.Speed1 = m1, //进度
+					this.follow.money2 = q2 //金额
+				this.follow.Speed2 = m2, //进度
+					this.follow.money3 = q3 //金额
+				this.follow.Speed3 = m3, //进度
+					this.follow.money4 = q4 //金额
+				this.follow.Speed4 = m4, //进度
+					this.ups = true
+			},
+			//确认后续计划
+			DetePlan() {
+				this.loading = true
+				this.$post(Api.editafter, {
+					"ID": this.id,
+					"Q1Invest": this.follow.money1,
+					"Q2Invest": this.follow.money2,
+					"Q3Invest": this.follow.money3,
+					"Q4Invest": this.follow.money4,
+					"Q1Memo": this.follow.Speed1,
+					"Q2Memo": this.follow.Speed2,
+					"Q3Memo": this.follow.Speed3,
+					"Q4Memo": this.follow.Speed4
+				}).then(res => {
+					console.log(res)
+					if(res.state == 200) {
+						this.pages = 1
+						this.loading = false
+						this.search == ''
+						this.getlist(this.pagesizs, this.pages, this.search)
+					} else {
+						this.loading = false
+						this.$message.error(res.errmsg);
+					}
+				})
+				this.ups = false
+			},
+			//改变显示条数
+			handleSizeChange(val) {
+				this.pagesizs = val
+				this.getlist(this.pagesizs, this.pages, this.search)
+			},
+			//翻页
+			handleCurrentChange(val) {
+				this.pages = val
+				this.getlist(this.pagesizs, this.pages, this.search)
+			},
+			filter() {
+				this.pages = 1
+				this.getlist(this.pagesizs, this.pages, this.search)
+			},
+			xiugai(row) {
+				this.project.names = row.ProjectName
+				this.project.value1 = row.OwnerID
+				this.project.value = row.LevelID
+				this.project.value2 = row.IndustryID
+				this.project.jhtz = row.InvestMoney
+				this.project.dates = row.ComemenceDate
+				this.id = row.ID
+				this.xm = true
+			},
+			//确认修改
+			qrxg() {
+				if(this.project.names == '') {
+					this.$message({
+						message: '项目不能为空',
+						type: 'warning'
+					});
+					return
+				}
+				if(this.project.jhtz == '') {
+					this.$message({
+						message: '金额不能为空',
+						type: 'warning'
+					});
+					return
+				}
+				if(this.project.dates == '') {
+					this.$message({
+						message: '时间不能为空',
+						type: 'warning'
+					});
+					return
+				}
+				this.loading = true
+				this.$post(Api.editprojs, {
+					"ID": this.id,
+					"ProjectName": this.project.names,
+					"OwnerID": this.project.value1,
+					"LevelID": this.project.value,
+					"IndustryID": this.project.value2,
+					"InvestMoney": this.project.jhtz,
+					"ComemenceDate": this.project.dates
+				}).then(res => {
+					console.log(res)
+					if(res.state == 200) {
+						this.xm = false
+						this.pages = 1
+						this.loading = false
+						this.search == ''
+						this.getlist(this.pagesizs, this.pages, this.search)
+					} else {
+						this.loading = false
+						this.xm = false
+						this.$message.error(res.errmsg);
+					}
+				})
+			},
+		}
+	}
+</script>
+
+<style scoped="">
+	.demo-table-expand {
+		font-size: 0;
+	}
+	
+	.demo-table-expand label {
+		width: 90px;
+		color: #99a9bf;
+	}
+	
+	.demo-table-expand .el-form-item {
+		margin-right: 0;
+		margin-bottom: 0;
+		width: 50%;
+	}
+</style>
