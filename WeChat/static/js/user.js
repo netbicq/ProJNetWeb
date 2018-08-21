@@ -1,2 +1,0 @@
-var userName=localStorage.userName
-var userPass=localStorage.userPass
