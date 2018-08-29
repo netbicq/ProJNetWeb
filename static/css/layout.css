@@ -377,6 +377,28 @@ a {
 .print.el-table--border td, .print.el-table--border th{
 	/*border: 1px solid #000;*/
 }
+.Tables{
+	width:100%;
+	color: #606266;
+	margin: auto;
+	border-collapse: collapse;
+	font-size: 12px;
+}
+.Tables .span{
+		display: block;
+		border-bottom: 1px solid #ebeef5;
+	}
+	.Tables span{
+		display: block;
+		line-height: 24px;
+		height: 24px;
+	}
+	.Tables td,
+	.Tables th {
+		text-align: center;
+		padding: 5px 0;
+		border: 1px solid #ebeef5;
+	}
 	.prinTable{
 		width:2500px;
 		color: #000;

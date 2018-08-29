@@ -66,7 +66,7 @@
 				</el-tab-pane>
 			</el-tabs>
 			<span slot="footer" class="dialog-footer">
-                <el-button @click="fnCancel()" size="small">取 消</el-button>
+                <el-button @click="userTip=false" size="small">取 消</el-button>
                 <el-button type="primary" @click="SetUp()" size="small">确 定</el-button>
             </span>
 		</el-dialog>
@@ -82,10 +82,10 @@
 					<el-input placeholder="请输入新密码" v-model="user.NPwd" type="password"></el-input>
 				</el-form-item>
 			</el-form>
-			<span slot="footer" class="dialog-footer">
-                <!-- <el-button @click="userTip = false" size="small">取 消</el-button> -->
+			<!--<span slot="footer" class="dialog-footer">
+                 <el-button @click="userTip = false" size="small">取 消</el-button> 
                 <el-button type="primary" @click="ConEditPass()" size="small">确 定</el-button>
-            </span>
+            </span>-->
 		</el-dialog>
 		<div class="mod" v-show="model">
 		</div>
@@ -152,9 +152,9 @@
 			handleClick(tab,event) {
 				console.log(tab.index)
 				if(tab.index==1){
-					this.index=2
-				}else if(tab.index==0){
 					this.index=1
+				}else if(tab.index==0){
+					this.index=0
 				}
 			},
 			//个人设置弹框
@@ -172,6 +172,10 @@
 				        this.user.Tel='';
 				        return false;
 				    }
+					if(this.user.CNName==''||this.user.Tel==''){
+						this.$message.error("参数不能为空");
+						return false;
+					}
 					this.$post(Api.setprofile, {
 						Login: this.user.Login,
 						CNName: this.user.CNName,
@@ -193,11 +197,17 @@
 						}
 					})
 				}else if(this.index==1){
-					//密码修改
-					this.$post(Api.resetpwd, {
+//					密码修改
+console.log(this.user.OldPwd)
+console.log(this.user.NPwd)
+					if(this.user.OldPwd==''||this.user.NPwd==''){
+						this.$message.error("参数不能为空");
+						return false;
+					}
+					this.$post(Api.changepwd, {
 						"ID": this.user.ID,
-						"OldPwd": this.form.oldpass,
-						"Pwd": this.form.newpass
+						"OldPwd": this.user.OldPwd,
+						"Pwd": this.user.NPwd
 					})
 					.then(res => {
 						console.log(res);

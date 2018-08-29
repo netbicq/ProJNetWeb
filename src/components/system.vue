@@ -373,6 +373,7 @@
 						this.userlist(this.pages, this.search, this.PageSize)
 					} else {
 						this.loading = false
+						this.loading = false
 						this.$message.error(res.errmsg);
 					}
 				})

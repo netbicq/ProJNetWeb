@@ -24,6 +24,7 @@ export default {
 	setrole:Host+'/api/auth/setrole',//设置用户角色
 	getmenu:Host+'/api/auth/getmenu',//设置用户角色
 	delrole:Host+'/api/auth/delrole',//删除角色
+	changepwd:Host+'/api/auth/changepwd',//修改密码
 	//文件上传
 	files:Host+'/api/file/post',//文件上传
 	
@@ -36,7 +37,7 @@ export default {
 	
 	//项目
 	progetlist:Host+'/api/proj/getlist',//获取列表
-	proaddnew:Host+'/api/proj/addnew',//新建项目
+	proaddnew:Host+'/api/proj/addprob',//新建项目
 	conedit:Host+'/api/proj/conedit',//修改联系人
 	addiss:Host+'/api/proj/addiss',//问题发布
 	editsch:Host+'/api/proj/editsch',//修改进度计划
@@ -50,4 +51,13 @@ export default {
 	reguser:Host+'/api/auth/reguser',//用户注册
 	yamm:Host+'/api/auth/yamm',//用户注册
 	getdata:Host+'/api/report/getdata',//用户注册
+	basAddnew:Host+'/api/bap/addnew',//	新建标准
+	basDelbap:Host+'/api/bap/delbap',//	删除指定ID的标准
+	basEditbap:Host+'/api/bap/editbap',//		修改标准
+	basGetlist:Host+'/api/bap/getlist',//	获取标准列表
+	getlistq:Host+'/api/proj/getlistq',//	获取节点
+	editschq:Host+'/api/proj/editschq',//	新增节点计划
+	editissq:Host+'/api/proj/editissq',//	修改节点计划
+	addschqe:Host+'/api/proj/addschqe',//	新增节点执行
+	editissqb:Host+'/api/proj/editissqb',//	修改节点执行
 }
