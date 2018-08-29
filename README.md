@@ -1,6 +1,6 @@
-# pro
+# judicature
 
-> A Vue.js project
+> xishan_judicature
 
 ## Build Setup
 
