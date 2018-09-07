@@ -14,15 +14,15 @@ import axios from 'axios'
 import { post, get } from './axios/fetch'
 Vue.prototype.$post = post;
 Vue.prototype.$get = get;
-Vue.filter('yy', function (value) {
-  if (!value) return ''
-  let dates = new Date(value);
-	let y = dates.getFullYear()
-	let m = dates.getMonth() + 1;
-	let d = dates.getDate();
-	return y + '.' + m + '.' + d
-//	+ ':' + f +':' + m;
-})
+//Vue.filter('yy', function (value) {
+//if (!value) return ''
+//let dates = new Date(value);
+//	let y = dates.getFullYear()
+//	let m = dates.getMonth() + 1;
+//	let d = dates.getDate();
+//	return y + '.' + m + '.' + d
+////	+ ':' + f +':' + m;
+//})
 
 Vue.prototype.$isTel = function (str) {
   if (str == null) return false;
@@ -45,6 +45,15 @@ Vue.filter('yy', function (value) {
 	let m = dates.getMonth() + 1;
 	let d = dates.getDate();
 	return y + '.' + (m < 10 ? "0" + m : m) + '.' + (d < 10 ? "0" + d : d)
+//	+ ':' + f +':' + m;
+})
+Vue.filter('date', function (value) {
+  if (!value) return ''
+  let dates = new Date(value);
+	let y = dates.getFullYear()
+	let m = dates.getMonth() + 1;
+	let d = dates.getDate();
+	return y + '.' + (m < 10 ? "0" + m : m)
 //	+ ':' + f +':' + m;
 })
 /* eslint-disable no-new */

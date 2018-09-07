@@ -47,6 +47,12 @@ export default new Router({
 		      component: resolve => void(require(['@/components/Project'], resolve))
 		    },
 		    {
+		      path: '/teamwork',
+		      name: 'teamwork',
+		      component: resolve => void(require(['@/components/teamwork'], resolve))
+		    },
+		    
+		    {
 		      path: '/report',
 		      name: 'Report',
 		      component: resolve => void(require(['@/components/Report'], resolve))

@@ -278,7 +278,7 @@ a {
 }
 .Owners .el-form-item .el-form-item__content{
 	line-height: 36px;
-	height: 36px;
+	/*height: 36px;*/
 }
 .el-dialog__body{
 	padding-bottom: 0 !important;
@@ -429,6 +429,13 @@ a {
     height: 40px !important;
     line-height: 40px !important;
 }
+.reposts{
+		width: 100%;
+		margin-bottom: 15px;
+	}
+.reposts .fl{
+	width: 20%;
+}
 @media screen and (max-width: 1890px) {
 	.reposts{
 		width: 100%;
@@ -436,6 +443,9 @@ a {
 	}
 	.reposts .fl{
 		width: 23%;
+	}
+	.reposts .fl{
+		margin-bottom: 15px;
 	}
 	.reposts .fl .el-select{
 		width: calc(100% - 56px);
@@ -457,4 +467,17 @@ a {
 	.reposts .fl .el-select{
 		width: calc(100% - 60px);
 	}
+	.reposts .fl .months.el-input{
+		width: calc(100% - 60px);
+	}
+	.reposts .fl:nth-of-type(5n){
+		float: left;
+	}
+}
+.masks{
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.5);
+	z-index: 2003;
 }

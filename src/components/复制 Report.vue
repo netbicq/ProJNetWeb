@@ -1,44 +1,39 @@
 <template>
 	<div v-loading='loading'>
-		<div class="title">
+		<div class="title" >
 			报表管理
 		</div>
 		<div>
 			<div class="panel">
 				<div class="panel-heading clearfix">
 					<div class="fl reposts">
-						<div class="fl">
+						<div class="fl" style="margin-right: 15px;">
 							<span>项目级别</span>
 							<el-select v-model="grade" clearable filterable multiple placeholder="请选择" class='select'>
 								<el-option v-for="item in gradeList" :key="item.ID" :label="item.DictName" :value="item.ID">
 								</el-option>
 							</el-select>
 						</div>
-						<div class="fl">
+						<div class="fl" style="margin-right: 15px;">
 							<span>所属行业</span>
 							<el-select v-model="trade" clearable filterable multiple placeholder="请选择" class='select'>
 								<el-option v-for="item in tradeList" :key="item.ID" :label="item.DictName" :value="item.ID">
 								</el-option>
 							</el-select>
 						</div>
-						<div class="fl">
+						<div class="fl" style="margin-right: 15px;">
 							<span>业主单位</span>
 							<el-select v-model="owner" clearable filterable multiple placeholder="请选择" class='select'>
 								<el-option v-for="item in ownerList" :key="item.ID" :label="item.OwnerName" :value="item.ID">
 								</el-option>
 							</el-select>
 						</div>
-						<div class="fl">
+						<div class="fl" style="margin-right: 15px;">
 							<span>项目进度</span>
 							<el-select v-model="jindu" clearable filterable placeholder="请选择">
 								<el-option v-for="item in jinduList" :key="item.value" :label="item.label" :value="item.value">
 								</el-option>
 							</el-select>
-						</div>
-						<div class="fl">
-							<span>月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;份</span>
-							<el-date-picker :clearable=false v-model="months" class='months' type="month" placeholder="选择月" format="yyyy 年 MM 月" value-format="yyyy-MM">
-							</el-date-picker>
 						</div>
 					</div>
 					<div class="search clearfix fr">
@@ -46,16 +41,14 @@
 						<button class="btn1 Info mini" style="margin-bottom: 2px;" @click='searchsf'>查询</button>
 						<button class="btn1 Info mini" style="margin-bottom: 2px;" @click='Excel'>导出Excel</button>
 						<button class="btn1 Info mini" style="margin-bottom: 2px;" @click='print'>打印</button>
-						<button class="btn1 Info mini" style="margin-bottom: 2px;" @click='colTrue'>设置显示列</button>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="panel">
-			<div style="font-size: 18px;text-align: center;
-				margin: 15px;"> {{Pank.Moth|date}}月份共{{Pank.Prophase}}个前期项目，{{Pank.Normal}}个项目正常推进，{{Pank.Exec}}个项目未按序时推进，其中{{Pank.POne}}个项目滞后1个月，{{Pank.PTwo}}个项目滞后2个月，{{Pank.PThree}}个项目滞后3个月以上</div>
-			<el-table :data="tableData5" :row-class-name="tableRowClassName" :cell-class-name="cell" height="550" border style="width: 100%" class='tables'>
-				<!--<el-table-column fixed prop='ProjectInfo.ProjectName' label="项目名称">
+			
+				<el-table :data="tableData5"  :row-class-name="tableRowClassName" :cell-class-name="cell" height="550" border style="width: 100%" class='tables'>
+					<el-table-column fixed prop='ProjectInfo.ProjectName' label="项目名称">
 					</el-table-column>
 					<el-table-column fixed label="计划/实际">
 						<template slot-scope='scope'>
@@ -72,122 +65,102 @@
 						<template slot-scope='scope'>
 							<div>{{scope.row.ProjectInfo.ComemenceDate|yy}}</div>
 						</template>
-					</el-table-column>-->
-				<el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList' :key='index' width='80' v-if='item.IsColumn'>
-					<!--<div  v-if="item.MultiColumn">
-						<el-table-column :label="items.Caption"  v-for='(items,index) in item.Children' :key='index' v-if="item.MultiColumn">
+					</el-table-column>
+					<el-table-column :label="item.Caption" v-for='(item,index) in colList' :key='index' width='80' :render-header="(h,obj,index) => renderHeader(h,obj,index)">
+						<template slot-scope='scope'>
+							<div class="borderBottom" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['sch_'+item.ColName]}}</div>
+							<div :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['exc_'+item.ColName]}}</div>
+						</template>
+					</el-table-column>
+					<el-table-column label="当前进展情况及存在问题" width='150'>
+						<template slot-scope='scope'>
+							<div @click='qs(scope.row.Issues.IssueContent)'>{{scope.row.Issues?scope.row.Issues.IssueContent:''}}</div>
+						</template>
+					</el-table-column>
+					<el-table-column label="下一周工作计划" width='150'>
+						<template slot-scope='scope'>
+							<div @click='qs(scope.row.ProjectInfo.NextPlan)'>{{scope.row.ProjectInfo?scope.row.ProjectInfo.NextPlan:''}}</div>
+						</template>
+					</el-table-column>
+					<el-table-column label="后续在建阶段工作计划">
+						<el-table-column label="第一季度完成投资">
 							<template slot-scope='scope'>
-								<div>{{scope.row[item.ColName.substr(0, item.ColName.indexOf('.'))][item.ColName.substr(item.ColName.indexOf('.')+1)]}}</div>
+								<div>{{scope.row.ProjectInfo.Q1Invest}}</div>
 							</template>
 						</el-table-column>
-					</div>
-					<div v-else="">-->
-						<template slot-scope='scope'>
-							<div v-if='item.IsPoint'>
-								<div class="borderBottom" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['sch_'+item.ColName]}}</div>
-								<div :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['exc_'+item.ColName]}}</div>
-							</div>
-							<div v-else="">
-								{{getValue(scope.row,item.ColName)}}
-								<!--{{item.ColName.substr(item.ColName.indexOf('.')+1)}}-->
-								<!--{{scope.row[item.ColName.substr(0, item.ColName.indexOf('.'))]}}-->
-							</div>
-						</template>
-					<!--</div>-->
-					
-					<!--<template slot-scope='scope' v-else="">
-							<div>{{scope.row.ProjectInfo.ProjectName}}</div>
-						</template>-->
-				</el-table-column>
-				<!--<el-table-column label="当前进展情况及存在问题" width='150'>
-					<template slot-scope='scope'>
-						<div @click='qs(scope.row.Issues.IssueContent)'>{{scope.row.Issues?scope.row.Issues.IssueContent:''}}</div>
-					</template>
-				</el-table-column>
-				<el-table-column label="下一周工作计划" width='150'>
-					<template slot-scope='scope'>
-						<div @click='qs(scope.row.ProjectInfo.NextPlan)'>{{scope.row.ProjectInfo?scope.row.ProjectInfo.NextPlan:''}}</div>
-					</template>
-				</el-table-column>
-				<el-table-column label="后续在建阶段工作计划">
-					<el-table-column label="第一季度完成投资">
-						<template slot-scope='scope'>
-							<div>{{scope.row.ProjectInfo.Q1Invest}}</div>
-						</template>
+						<el-table-column label="第一季度期末形象进度">
+							<template slot-scope='scope'>
+								<div>{{scope.row.ProjectInfo.Q1Memo}}</div>
+							</template>
+						</el-table-column>
+						<el-table-column label="第二季度完成投资">
+							<template slot-scope='scope'>
+								<div>{{scope.row.ProjectInfo.Q2Invest}}</div>
+							</template>
+						</el-table-column>
+						<el-table-column label="第二季度期末形象进度">
+							<template slot-scope='scope'>
+								<div>{{scope.row.ProjectInfo.Q2Memo}}</div>
+							</template>
+						</el-table-column>
+						
+						<el-table-column label="第三季度完成投资">
+							<template slot-scope='scope'>
+								<div>{{scope.row.ProjectInfo.Q3Invest}}</div>
+							</template>
+						</el-table-column>
+						<el-table-column label="第三季度期末形象进度">
+							<template slot-scope='scope'>
+								<div>{{scope.row.ProjectInfo.Q3Memo}}</div>
+							</template>
+						</el-table-column>
+						<el-table-column label="第四季度完成投资">
+							<template slot-scope='scope'>
+								<div>{{scope.row.ProjectInfo.Q4Invest}}</div>
+							</template>
+						</el-table-column>
+						<el-table-column label="第四季度期末形象进度">
+							<template slot-scope='scope'>
+								<div>{{scope.row.ProjectInfo.Q4Memo}}</div>
+							</template>
+						</el-table-column>
 					</el-table-column>
-					<el-table-column label="第一季度期末形象进度">
-						<template slot-scope='scope'>
-							<div>{{scope.row.ProjectInfo.Q1Memo}}</div>
-						</template>
+					<el-table-column label="责任管理部门">
+						<el-table-column label="单位名称">
+							<template slot-scope='scope'>
+								<div>{{scope.row.Project_Contacts.SitePrincipal}}</div>
+							</template>
+						</el-table-column>
+						<el-table-column label="项目负责人">
+							<template slot-scope='scope'>
+								<div>{{scope.row.Project_Contacts.SiteLink}}</div>
+							</template>
+						</el-table-column>
+						<el-table-column label="具体责任人">
+							<template slot-scope='scope'>
+								<div>{{scope.row.Project_Contacts.Handler}}</div>
+							</template>
+						</el-table-column>
 					</el-table-column>
-					<el-table-column label="第二季度完成投资">
-						<template slot-scope='scope'>
-							<div>{{scope.row.ProjectInfo.Q2Invest}}</div>
-						</template>
+					<el-table-column label="业主单位">
+						<el-table-column label="单位名称">
+							<template slot-scope='scope'>
+								<div>{{scope.row.ProjectOwner.OwnerName}}</div>
+							</template>
+						</el-table-column>
+						<el-table-column label="项目负责人">
+							<template slot-scope='scope'>
+								<div>{{scope.row.ProjectOwner.Handler}}</div>
+							</template>
+						</el-table-column>
+						<el-table-column label="具体责任人">
+							<template slot-scope='scope'>
+								<div>{{scope.row.ProjectOwner.Principal}}</div>
+							</template>
+						</el-table-column>
 					</el-table-column>
-					<el-table-column label="第二季度期末形象进度">
-						<template slot-scope='scope'>
-							<div>{{scope.row.ProjectInfo.Q2Memo}}</div>
-						</template>
-					</el-table-column>
-
-					<el-table-column label="第三季度完成投资">
-						<template slot-scope='scope'>
-							<div>{{scope.row.ProjectInfo.Q3Invest}}</div>
-						</template>
-					</el-table-column>
-					<el-table-column label="第三季度期末形象进度">
-						<template slot-scope='scope'>
-							<div>{{scope.row.ProjectInfo.Q3Memo}}</div>
-						</template>
-					</el-table-column>
-					<el-table-column label="第四季度完成投资">
-						<template slot-scope='scope'>
-							<div>{{scope.row.ProjectInfo.Q4Invest}}</div>
-						</template>
-					</el-table-column>
-					<el-table-column label="第四季度期末形象进度">
-						<template slot-scope='scope'>
-							<div>{{scope.row.ProjectInfo.Q4Memo}}</div>
-						</template>
-					</el-table-column>
-				</el-table-column>
-				<el-table-column label="责任管理部门">
-					<el-table-column label="单位名称">
-						<template slot-scope='scope'>
-							<div>{{scope.row.Project_Contacts.SitePrincipal}}</div>
-						</template>
-					</el-table-column>
-					<el-table-column label="项目负责人">
-						<template slot-scope='scope'>
-							<div>{{scope.row.Project_Contacts.SiteLink}}</div>
-						</template>
-					</el-table-column>
-					<el-table-column label="具体责任人">
-						<template slot-scope='scope'>
-							<div>{{scope.row.Project_Contacts.Handler}}</div>
-						</template>
-					</el-table-column>
-				</el-table-column>
-				<el-table-column label="业主单位">
-					<el-table-column label="单位名称">
-						<template slot-scope='scope'>
-							<div>{{scope.row.ProjectOwner.OwnerName}}</div>
-						</template>
-					</el-table-column>
-					<el-table-column label="项目负责人">
-						<template slot-scope='scope'>
-							<div>{{scope.row.ProjectOwner.Handler}}</div>
-						</template>
-					</el-table-column>
-					<el-table-column label="具体责任人">
-						<template slot-scope='scope'>
-							<div>{{scope.row.ProjectOwner.Principal}}</div>
-						</template>
-					</el-table-column>
-				</el-table-column>-->
-			</el-table>
-
+				</el-table>
+			
 			<!--<el-table :data="tableData5" :span-method="objectSpanMethod" :row-class-name="tableRowClassName" :cell-class-name="cell" border style="width: 100%; margin-top: 20px">
 				
 			</el-table>-->
@@ -196,19 +169,6 @@
 				</el-pagination>
 			</div>
 		</div>
-		<el-dialog title="列设置" :visible.sync="userTip" width="340px">
-					<div>
-						<el-form ref="ReportCols" label-width="180px" class='Owners'>
-							<el-form-item :label="item.Caption" v-for='(item,index) in colList' :key='index'>
-								<el-checkbox v-model="item.IsColumn">是否显示</el-checkbox>
-							</el-form-item>
-						</el-form>
-					</div>
-					<span slot="footer" class="dialog-footer">
-                    <el-button   @click="userTip = false" size="small">取 消</el-button>
-                    <el-button type="primary" @click="confirmAdd()" size="small">确 定</el-button>
-                </span>
-				</el-dialog>
 		<el-dialog title="问题" :visible.sync="dialogVisible" width="384px">
 			<span style="display: block;
     width: 100%;
@@ -221,12 +181,12 @@
 		<div id="print" v-show='false'>
 			<table class="prinTable">
 				<thead>
-					<tr>
-						<td rowspan="2">项目名称</td>
-						<td rowspan="2">计划/实际</td>
-						<td rowspan="2">年度计划投资</td>
-						<td rowspan="2">计划开工月份</td>
-						<!--<td rowspan="2" width="80px">《规划选址及用地意见书》批复</td>
+				<tr>
+					<td rowspan="2">项目名称</td>
+					<td rowspan="2">计划/实际</td>
+					<td rowspan="2">年度计划投资</td>
+					<td rowspan="2">计划开工月份</td>
+					<!--<td rowspan="2" width="80px">《规划选址及用地意见书》批复</td>
 					<td rowspan="2" width="80px">农转用手续及供地批复</td>
 					<td rowspan="2" width="80px">土地出让合同（招投标项目填写</td>
 					<td rowspan="2" width="80px">土地使用权证</td>
@@ -243,29 +203,29 @@
 					<td rowspan="2" width="80px">《建设工程规划许可证》批复</td>
 					<td rowspan="2" width="80px">施工监理人员备案</td>
 					<td rowspan="2" width="80px">《施工许可证》批复</td>-->
-						<td rowspan="2" width="80px" v-for='(item,index) in colList' :key='index'>{{item.Caption}}</td>
-						<td rowspan="2">当前进展情况及存在问题</td>
-						<td rowspan="2">下一周工作计划</td>
-						<td colspan="8">后续在建阶段工作计划</td>
-						<td colspan="3">责任管理部门</td>
-						<td colspan="3">业主单位</td>
-					</tr>
-					<tr>
-						<td>第一季度完成投资</td>
-						<td>第一季度期末形象进度</td>
-						<td>第二季度完成投资</td>
-						<td>第二季度期末形象进度</td>
-						<td>第三季度完成投资</td>
-						<td>第三季度期末形象进度</td>
-						<td>第四季度完成投资</td>
-						<td>第四季度期末形象进度</td>
-						<td>单位名称</td>
-						<td>项目负责人</td>
-						<td>具体责任人</td>
-						<td>单位名称</td>
-						<td>项目负责人</td>
-						<td>具体责任人</td>
-					</tr>
+					<td rowspan="2" width="80px" v-for='(item,index) in colList' :key='index'>{{item.Caption}}</td>
+					<td rowspan="2">当前进展情况及存在问题</td>
+					<td rowspan="2">下一周工作计划</td>
+					<td colspan="8">后续在建阶段工作计划</td>
+					<td colspan="3">责任管理部门</td>
+					<td colspan="3">业主单位</td>
+				</tr>
+				<tr>
+					<td>第一季度完成投资</td>
+					<td>第一季度期末形象进度</td>
+					<td>第二季度完成投资</td>
+					<td>第二季度期末形象进度</td>
+					<td>第三季度完成投资</td>
+					<td>第三季度期末形象进度</td>
+					<td>第四季度完成投资</td>
+					<td>第四季度期末形象进度</td>
+					<td>单位名称</td>
+					<td>项目负责人</td>
+					<td>具体责任人</td>
+					<td>单位名称</td>
+					<td>项目负责人</td>
+					<td>具体责任人</td>
+				</tr>
 				</thead>
 				<tbody>
 					<tr v-for='(item,index) in tableData5' :key='index'>
@@ -434,53 +394,38 @@
 				}],
 				jindu: 1,
 				loading: false,
-				colList: [],
-				months:new Date(),
-				Pank:{},
-				userTip:false,
-				ReportCols:[],//显示列
+				colList:[]
 			}
 		},
 		created() {
 			this.Selector()
 			this.dicSelector()
 			this.dicSelector1()
-			this.getdata(this.pagesizs, this.pages, this.search, this.grade, this.trade, this.owner, this.jindu,this.months)
+			this.getdata(this.pagesizs, this.pages, this.search, this.grade, this.trade, this.owner, this.jindu)
 		},
 		methods: {
-			//			renderHeader(h,{ column,$index }) {
-			//		         return (
-			//		             <div>
-			//		                <span>文字</span>
-			//		                <el-button>按钮</el-button>
-			//		             </div>
-			//		         )
-			//		   },
-			//			renderHeader(h, { column,$index }) {
-			//			    return h("span",[column.label])
-			//			},
-			//			},
-			tofarmt(vaue) {
-				if(vaue == '/') {
+//			renderHeader(h,{ column,$index }) {
+//		         return (
+//		             <div>
+//		                <span>文字</span>
+//		                <el-button>按钮</el-button>
+//		             </div>
+//		         )
+//		   },
+			renderHeader(h, { column,$index }) {
+			    return h("span",[column.label])
+			},
+			tofarmt(vaue){
+				if(vaue=='/'){
 					return vaue
-				} else {
+				}else{
 					let dates = new Date(vaue);
 					let y = dates.getFullYear()
 					let m = dates.getMonth() + 1;
 					let d = dates.getDate();
 					return y + '.' + (m < 10 ? "0" + m : m) + '.' + (d < 10 ? "0" + d : d)
 				}
-
-			},
-			getValue(ojb,strkey){
-				console.log(ojb)
-				var strkeyArr = strkey.split('.').filter(item=>item!=='');
-				if(strkeyArr.length){
-					if(strkeyArr[0] in ojb){
-						var newObj = ojb[strkeyArr[0]]
-						return strkeyArr.length>1?getValue(newObj,strkeyArr.slice(1).join('.')):newObj
-					}
-				}
+			  	
 			},
 			qs(tex) {
 				this.texts = tex
@@ -497,8 +442,7 @@
 						"ProjectLevel": this.grade,
 						"ProjectIndustry": this.trade,
 						"ProjectOwner": this.owner,
-						"ExeceedType": this.jindu,
-						"Month":this.months
+						"ExeceedType": this.jindu
 					},
 					"OrderString": "",
 					"ToExcel": true
@@ -508,7 +452,7 @@
 						this.loading = false;
 						if(res.data.ReporDynlist.ExcelResult && res.data.ReporDynlist.ExcelResult.length != 0) {
 							var urls = res.data.ReporDynlist.ExcelResult
-							window.location.href = Api.Hostname + '/' + urls
+							window.location.href = Api.Hostname +'/'+ urls
 						}
 					} else {
 						this.loading = false;
@@ -517,7 +461,7 @@
 				})
 			},
 			//获取列表
-			getdata(pagesizs, pages, search, grade, trade, owner, jindu,months) {
+			getdata(pagesizs, pages, search, grade, trade, owner, jindu) {
 				this.loading = true
 				this.$post(Api.getdata, {
 					"PageSize": pagesizs,
@@ -527,8 +471,7 @@
 						"ProjectLevel": grade,
 						"ProjectIndustry": trade,
 						"ProjectOwner": owner,
-						"ExeceedType": jindu,
-						"Month":months
+						"ExeceedType": jindu
 					},
 					"OrderString": "",
 					"ToExcel": false
@@ -538,14 +481,7 @@
 						this.loading = false
 						this.tableData5 = res.data.ReporDynlist.Data
 						this.total = res.data.ReporDynlist.Items ? res.data.ReporDynlist.Items : 1;
-						this.Pank = res.data.Pank
-						if(sessionStorage.colList){
-							this.colList = JSON.parse(sessionStorage.colList) 
-						}else{
-							this.colList = res.data.ReportCols
-							sessionStorage.colList=JSON.stringify(this.colList)
-						}
-						this.ReportCols = res.data.ReportCols
+						this.colList=res.data.ReportCols
 					} else {
 						this.loading = false
 						this.$message.error(res.errmsg);
@@ -573,57 +509,57 @@
 				if(row.ProJBool == true && columnIndex == 0) {
 					return 'red'
 				}
-				//				if(row.Point_GHXZYDJYJSPF.Execeed == true && columnIndex == 4) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_LZYSXJGDPF.Execeed == true && columnIndex == 5) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_TDCRHT.Execeed == true && columnIndex == 6) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_TDSYQZ.Execeed == true && columnIndex == 7) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_XMZPSJFAPF.Execeed == true && columnIndex == 8) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_GCKXXYJBGPF.Execeed == true && columnIndex == 9) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_JSYDGHXKZPF.Execeed == true && columnIndex == 10) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_DKBGWC.Execeed == true && columnIndex == 11) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_CBSJJGSPF.Execeed == true && columnIndex == 12) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_SGTBZHSC.Execeed == true && columnIndex == 13) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_YSBZWC.Execeed == true && columnIndex == 14) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_CSKZJPF.Execeed == true && columnIndex == 15) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_SGJLZTP.Execeed == true && columnIndex == 16) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_XMKG.Execeed == true && columnIndex == 17) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_JSGCGHXKZPF.Execeed == true && columnIndex == 18) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_SGJLRYBA.Execeed == true && columnIndex == 19) {
-				//					return 'red'
-				//				}
-				//				if(row.Point_SGXKZPF.Execeed == true && columnIndex == 20) {
-				//					return 'red'
-				//				}
+//				if(row.Point_GHXZYDJYJSPF.Execeed == true && columnIndex == 4) {
+//					return 'red'
+//				}
+//				if(row.Point_LZYSXJGDPF.Execeed == true && columnIndex == 5) {
+//					return 'red'
+//				}
+//				if(row.Point_TDCRHT.Execeed == true && columnIndex == 6) {
+//					return 'red'
+//				}
+//				if(row.Point_TDSYQZ.Execeed == true && columnIndex == 7) {
+//					return 'red'
+//				}
+//				if(row.Point_XMZPSJFAPF.Execeed == true && columnIndex == 8) {
+//					return 'red'
+//				}
+//				if(row.Point_GCKXXYJBGPF.Execeed == true && columnIndex == 9) {
+//					return 'red'
+//				}
+//				if(row.Point_JSYDGHXKZPF.Execeed == true && columnIndex == 10) {
+//					return 'red'
+//				}
+//				if(row.Point_DKBGWC.Execeed == true && columnIndex == 11) {
+//					return 'red'
+//				}
+//				if(row.Point_CBSJJGSPF.Execeed == true && columnIndex == 12) {
+//					return 'red'
+//				}
+//				if(row.Point_SGTBZHSC.Execeed == true && columnIndex == 13) {
+//					return 'red'
+//				}
+//				if(row.Point_YSBZWC.Execeed == true && columnIndex == 14) {
+//					return 'red'
+//				}
+//				if(row.Point_CSKZJPF.Execeed == true && columnIndex == 15) {
+//					return 'red'
+//				}
+//				if(row.Point_SGJLZTP.Execeed == true && columnIndex == 16) {
+//					return 'red'
+//				}
+//				if(row.Point_XMKG.Execeed == true && columnIndex == 17) {
+//					return 'red'
+//				}
+//				if(row.Point_JSGCGHXKZPF.Execeed == true && columnIndex == 18) {
+//					return 'red'
+//				}
+//				if(row.Point_SGJLRYBA.Execeed == true && columnIndex == 19) {
+//					return 'red'
+//				}
+//				if(row.Point_SGXKZPF.Execeed == true && columnIndex == 20) {
+//					return 'red'
+//				}
 
 			},
 			objectSpanMethod({
@@ -649,17 +585,17 @@
 			//改变显示条数
 			handleSizeChange(val) {
 				this.pagesizs = val
-				this.getdata(this.pagesizs, this.pages, this.search, this.grade, this.trade, this.owner, this.jindu,this.months)
+				this.getdata(this.pagesizs, this.pages, this.search, this.grade, this.trade, this.owner, this.jindu)
 			},
 			//翻页
 			handleCurrentChange(val) {
 				this.pages = val
-				this.getdata(this.pagesizs, this.pages, this.search, this.grade, this.trade, this.owner, this.jindu,this.months)
+				this.getdata(this.pagesizs, this.pages, this.search, this.grade, this.trade, this.owner, this.jindu)
 			},
 			//收索
 			searchsf() {
 				this.pages = 1
-				this.getdata(this.pagesizs, this.pages, this.search, this.grade, this.trade, this.owner, this.jindu,this.months)
+				this.getdata(this.pagesizs, this.pages, this.search, this.grade, this.trade, this.owner, this.jindu)
 			},
 			//获取业主单位
 			Selector() {
@@ -706,13 +642,6 @@
 					document.body.innerHTML = oldContent;
 					return false;
 				}, 0)
-			},
-			colTrue(){
-				this.userTip=true
-			},
-			confirmAdd(){
-				sessionStorage.colList=JSON.stringify(this.colList)
-				this.userTip=false
 			}
 		}
 	}

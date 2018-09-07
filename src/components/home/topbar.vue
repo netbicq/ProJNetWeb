@@ -22,7 +22,9 @@
 				</el-dropdown-menu>
 			</el-dropdown>
 		</div>
-		<el-dialog title="个人管理" :visible.sync="userTip" :show-close="false" :close-on-click-modal="false" :modal="false" width="400px">
+		<!--<div class="masks" v-if="userTip" @click="shows">
+		</div>-->
+		<el-dialog title="个人管理" :visible.sync="userTip" :modal-append-to-body='false' width="400px">
 			<el-tabs v-model="activeName"  @tab-click="handleClick">
 				<el-tab-pane label="信息管理" name="info">
 					<el-form :label-position="labelPosition" label-width="100px">
@@ -35,7 +37,7 @@
 						<el-form-item label="电话：">
 							<el-input placeholder="请输入电话" v-model="user.Tel"></el-input>
 						</el-form-item>
-						<el-form-item label="头像上传：">
+						<!--<el-form-item label="头像上传：">
                         <div class="uploads" style="width:178px">
                             <el-upload
                               class="avatar-uploader"
@@ -48,7 +50,7 @@
                               <i v-else class="el-icon-plus avatar-uploader-icon" style="line-height: 178px;"></i>
                             </el-upload>
                         </div>
-                    	</el-form-item>
+                    	</el-form-item>-->
 					</el-form>
 				</el-tab-pane>
 				<el-tab-pane label="密码修改" name="pass">
@@ -70,23 +72,7 @@
                 <el-button type="primary" @click="SetUp()" size="small">确 定</el-button>
             </span>
 		</el-dialog>
-		<el-dialog title="修改密码" :visible.sync="editPass" :show-close="false" :close-on-click-modal="false" :modal="false" width="400px">
-			<el-form :label-position="labelPosition" label-width="100px">
-				<el-form-item label="用户名：">
-					<el-input placeholder="请输入用户名" v-model="user.Login" disabled></el-input>
-				</el-form-item>
-				<el-form-item label="旧密码：">
-					<el-input placeholder="请输入旧密码" v-model="user.OldPwd" type="password"></el-input>
-				</el-form-item>
-				<el-form-item label="新密码：">
-					<el-input placeholder="请输入新密码" v-model="user.NPwd" type="password"></el-input>
-				</el-form-item>
-			</el-form>
-			<!--<span slot="footer" class="dialog-footer">
-                 <el-button @click="userTip = false" size="small">取 消</el-button> 
-                <el-button type="primary" @click="ConEditPass()" size="small">确 定</el-button>
-            </span>-->
-		</el-dialog>
+		
 		<div class="mod" v-show="model">
 		</div>
 	</div>
@@ -143,6 +129,9 @@
 			this.user.ID = this.UserInfo.ID;
 		},
 		methods: {
+			shows(){
+				console.log(1)
+			},
 			handleAvatarSuccess() {
 
 			},

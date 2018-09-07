@@ -60,4 +60,9 @@ export default {
 	editissq:Host+'/api/proj/editissq',//	修改节点计划
 	addschqe:Host+'/api/proj/addschqe',//	新增节点执行
 	editissqb:Host+'/api/proj/editissqb',//	修改节点执行
+	deletepro:Host+'/api/proj/deletepro',//	删除
+	
+	addnewTeam:Host+'/api/team/addnew',//	新建协调工作
+	delTeam:Host+'/api/team/delteam',//		删除指定ID的
+	getlistTeam:Host+'/api/team/getlist',//		获取协调工作列表
 }

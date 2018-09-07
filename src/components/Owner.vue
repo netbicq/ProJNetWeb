@@ -373,7 +373,7 @@
 				})
 			},
 			//删除
-			fnDelUser() {
+			fnDelUser(id) {
 				this.$confirm("将永久删除, 是否继续?", "提示", {
 						confirmButtonText: "确定",
 						cancelButtonText: "取消",
@@ -383,6 +383,7 @@
 						this.loading = true;
 						this.$get(Api.del + "/" + id)
 							.then(response => {
+								console.log(response)
 								if(response.data.state == 200) {
 									this.pages = 1
 									this.loadings = false
@@ -394,7 +395,7 @@
 									});
 								} else {
 									this.loading = false;
-									this.$message.error(response.data.msg);
+									this.$message.error(response.data.errmsg);
 								}
 							})
 							.catch(err => {

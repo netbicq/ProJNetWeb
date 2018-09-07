@@ -51,6 +51,18 @@
 									<el-form-item label="业主主要领导电话" class='fr w50'>
 										<el-input v-model="scope.row.Project_Contacts.LeaderTEL" placeholder="请输入主要领导电话" style="width:250px;"></el-input>
 									</el-form-item>
+									<el-form-item label="集团公司分管领导" class='fl w50'>
+										<el-input v-model="scope.row.Project_Contacts.ComLead" placeholder="请输入集团公司分管领导" style="width:250px;"></el-input>
+									</el-form-item>
+									<el-form-item label="集团公司分管领导电话" class='fr w50'>
+										<el-input v-model="scope.row.Project_Contacts.ComLeadTEL" placeholder="请输入集团公司分管领导电话" style="width:250px;"></el-input>
+									</el-form-item>
+									<el-form-item label="集团公司主要负责人" class='fl w50'>
+										<el-input v-model="scope.row.Project_Contacts.ComPrincipal" placeholder="请输入集团公司主要负责人" style="width:250px;"></el-input>
+									</el-form-item>
+									<el-form-item label="集团公司主要负责人电话" class='fr w50'>
+										<el-input v-model="scope.row.Project_Contacts.ComPrincipalTEL" placeholder="请输入集团公司主要负责人电话" style="width:250px;"></el-input>
+									</el-form-item>
 									<el-button type="primary" size="small" class='fr' @click='bclxr'>保存</el-button>
 								</el-form>
 
@@ -137,6 +149,11 @@
 				</el-table-column>
 				<el-table-column label="第四季度投资" prop="Project_Info.Q4Invest">
 				</el-table-column>
+				<el-table-column label="下一周工作计划" show-overflow-tooltip prop="Project_Info.NextPlan">
+					<template slot-scope='scope'>
+						<div @click='qs(scope.row.Project_Info.NextPlan)'>{{scope.row.Project_Info?scope.row.Project_Info.NextPlan:''}}</div>
+					</template>
+				</el-table-column>
 				<el-table-column label="创建人" prop="Project_Info.CreateMan">
 				</el-table-column>
 				<el-table-column label="创建日期" prop="Project_Info.CreateDate">
@@ -162,7 +179,7 @@
 								<el-dropdown-item v-if="Check&&scope.row.Project_Info.State==6">
 									<button class="btn Pink mini" @click="stateset(scope.row.Project_Info.ID,3)">审批通过</button>
 								</el-dropdown-item>
-								<el-dropdown-item v-if='Check&&scope.row.Project_Info.State==3'>
+								<el-dropdown-item v-if='scope.row.Project_Info.State==3'>
 									<button class="btn Purple mini" @click="stateset(scope.row.Project_Info.ID,5)">提交审批</button>
 								</el-dropdown-item>
 								<el-dropdown-item v-if='scope.row.Project_Info.State==3'>
@@ -172,9 +189,11 @@
 								<el-dropdown-item v-if='Start'>
 									<button class="btn Danger mini" @click="stateset(scope.row.Project_Info.ID,4)">开&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 工</button>
 								</el-dropdown-item>
-
+								<el-dropdown-item v-if='Start'>
+									<button class="btn Warning mini" @click="dels(scope.row.Project_Info.ID)">删&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 除</button>
+								</el-dropdown-item>
 								<el-dropdown-item>
-									<button class="btn Green mini" @click="followUp(scope.row.Project_Info.ID,scope.row.Project_Info.Q1Invest,scope.row.Project_Info.Q2Invest,scope.row.Project_Info.Q3Invest,scope.row.Project_Info.Q4Invest,scope.row.Project_Info.Q1Memo,scope.row.Project_Info.Q2Memo,scope.row.Project_Info.Q3Memo,scope.row.Project_Info.Q4Memo)">后续计划</button>
+									<button class="btn Green mini" @click="followUp(scope.row.Project_Info.ID,scope.row.Project_Info.Q1Invest,scope.row.Project_Info.Q2Invest,scope.row.Project_Info.Q3Invest,scope.row.Project_Info.Q4Invest,scope.row.Project_Info.Q1Memo,scope.row.Project_Info.Q2Memo,scope.row.Project_Info.Q3Memo,scope.row.Project_Info.Q4Memo,scope.row.Project_Info.NextPlan)">后续计划</button>
 								</el-dropdown-item>
 								<el-dropdown-item>
 									<button class="btn Info mini" @click="fnResetPwdTip(scope.row.Project_Info.ID)">问题发布</button>
@@ -263,7 +282,70 @@
 						<el-form-item label="业主主要领导电话" class='fr w50'>
 							<el-input v-model="formLabelAlign.fugleTel" placeholder="请输入主要领导电话" style="width:200px;"></el-input>
 						</el-form-item>
+						<el-form-item label="集团公司分管领导" class='fl w50'>
+							<el-input v-model="formLabelAlign.jtld" placeholder="请输入主要领导" style="width:200px;"></el-input>
+						</el-form-item>
+						<el-form-item label="集团公司分管领导电话" class='fr w50'>
+							<el-input v-model="formLabelAlign.jtldTel" placeholder="请输入主要领导电话" style="width:200px;"></el-input>
+						</el-form-item>
+						<el-form-item label="集团公司主要负责人" class='fl w50'>
+							<el-input v-model="formLabelAlign.jtfzr" placeholder="请输入主要领导" style="width:200px;"></el-input>
+						</el-form-item>
+						<el-form-item label="集团公司主要负责人电话" class='fr w50'>
+							<el-input v-model="formLabelAlign.jtfzrTel" placeholder="请输入主要领导电话" style="width:200px;"></el-input>
+						</el-form-item>
 					</el-form>
+				</el-tab-pane>
+				<el-tab-pane label="后续计划" name="4">
+					<el-tabs v-model="aitijhL" @tab-click="handleClick">
+						<el-tab-pane label="第一季度" name="1">
+					<el-form ref="follow" :model="follow" label-width="80px" class='Owners'>
+						<el-form-item label="完成投资">
+							<el-input v-model="follow.money1" placeholder="请输入金额" style="width:660px;"></el-input><span style="margin-left: 5px;">万元</span>
+						</el-form-item>
+						<el-form-item label="形象进度" class='clearfix'>
+							<el-input v-model="follow.Speed1" placeholder="" type="textarea" style="width:700px;"></el-input>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+				<el-tab-pane label="第二季度" name="2">
+					<el-form ref="follow" :model="follow" label-width="80px" class='Owners'>
+						<el-form-item label="完成投资">
+							<el-input v-model="follow.money2" placeholder="请输入金额" style="width:660px;"></el-input><span style="margin-left: 5px;">万元</span>
+						</el-form-item>
+						<el-form-item label="形象进度" class='clearfix'>
+							<el-input v-model="follow.Speed2" placeholder="" type="textarea" style="width:700px;"></el-input>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+				<el-tab-pane label="第三季度" name="3">
+					<el-form ref="follow" :model="follow" label-width="80px" class='Owners'>
+						<el-form-item label="完成投资">
+							<el-input v-model="follow.money3" placeholder="请输入金额" style="width:660px;"></el-input><span style="margin-left: 5px;">万元</span>
+						</el-form-item>
+						<el-form-item label="形象进度" class='clearfix'>
+							<el-input v-model="follow.Speed3" placeholder="" type="textarea" style="width:700px;"></el-input>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+				<el-tab-pane label="第四季度" name="4">
+					<el-form ref="follow" :model="follow" label-width="80px" class='Owners'>
+						<el-form-item label="完成投资">
+							<el-input v-model="follow.money4" placeholder="请输入金额" style="width:660px;"></el-input><span style="margin-left: 5px;">万元</span>
+						</el-form-item>
+						<el-form-item label="形象进度" class='clearfix'>
+							<el-input v-model="follow.Speed4" placeholder="" type="textarea" style="width:700px;"></el-input>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+				<el-tab-pane label="下一周工作计划" name="5">
+					<el-form ref="follow" :model="follow" label-width="120px" class='Owners'>
+						<el-form-item label="下一周工作计划" class='clearfix'>
+							<el-input v-model="follow.nextPlan" placeholder="" type="textarea" style="width:660px;"></el-input>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+					</el-tabs>
 				</el-tab-pane>
 			</el-tabs>
 			<span slot="footer" class="dialog-footer">
@@ -293,45 +375,52 @@
 			<el-button size="small" type="primary" @click="edit()">确 定</el-button>
 		</span>
 		</el-dialog>
-		<el-dialog title="后续计划" :visible.sync="ups" width="424px" class='eld'>
+		<el-dialog title="后续计划" :visible.sync="ups" width="500px" class='eld'>
 			<el-tabs v-model="activeName11">
 				<el-tab-pane label="第一季度" name="first">
 					<el-form ref="follow" :model="follow" label-width="80px" class='Owners'>
 						<el-form-item label="完成投资">
-							<el-input v-model="follow.money1" placeholder="请输入金额" style="width:264px;"></el-input><span style="margin-left: 5px;">万元</span>
+							<el-input v-model="follow.money1" placeholder="请输入金额" style="width:340px;"></el-input><span style="margin-left: 5px;">万元</span>
 						</el-form-item>
 						<el-form-item label="形象进度" class='clearfix'>
-							<el-input v-model="follow.Speed1" placeholder="" type="textarea" style="width:304px;"></el-input>
+							<el-input v-model="follow.Speed1" placeholder="" type="textarea" style="width:380px;"></el-input>
 						</el-form-item>
 					</el-form>
 				</el-tab-pane>
 				<el-tab-pane label="第二季度" name="second">
 					<el-form ref="follow" :model="follow" label-width="80px" class='Owners'>
 						<el-form-item label="完成投资">
-							<el-input v-model="follow.money2" placeholder="请输入金额" style="width:264px;"></el-input><span style="margin-left: 5px;">万元</span>
+							<el-input v-model="follow.money2" placeholder="请输入金额" style="width:340px;"></el-input><span style="margin-left: 5px;">万元</span>
 						</el-form-item>
 						<el-form-item label="形象进度" class='clearfix'>
-							<el-input v-model="follow.Speed2" placeholder="" type="textarea" style="width:304px;"></el-input>
+							<el-input v-model="follow.Speed2" placeholder="" type="textarea" style="width:380px;"></el-input>
 						</el-form-item>
 					</el-form>
 				</el-tab-pane>
 				<el-tab-pane label="第三季度" name="third">
 					<el-form ref="follow" :model="follow" label-width="80px" class='Owners'>
 						<el-form-item label="完成投资">
-							<el-input v-model="follow.money3" placeholder="请输入金额" style="width:264px;"></el-input><span style="margin-left: 5px;">万元</span>
+							<el-input v-model="follow.money3" placeholder="请输入金额" style="width:340px;"></el-input><span style="margin-left: 5px;">万元</span>
 						</el-form-item>
 						<el-form-item label="形象进度" class='clearfix'>
-							<el-input v-model="follow.Speed3" placeholder="" type="textarea" style="width:304px;"></el-input>
+							<el-input v-model="follow.Speed3" placeholder="" type="textarea" style="width:380px;"></el-input>
 						</el-form-item>
 					</el-form>
 				</el-tab-pane>
 				<el-tab-pane label="第四季度" name="fourth">
 					<el-form ref="follow" :model="follow" label-width="80px" class='Owners'>
 						<el-form-item label="完成投资">
-							<el-input v-model="follow.money4" placeholder="请输入金额" style="width:264px;"></el-input><span style="margin-left: 5px;">万元</span>
+							<el-input v-model="follow.money4" placeholder="请输入金额" style="width:340px;"></el-input><span style="margin-left: 5px;">万元</span>
 						</el-form-item>
 						<el-form-item label="形象进度" class='clearfix'>
-							<el-input v-model="follow.Speed4" placeholder="" type="textarea" style="width:304px;"></el-input>
+							<el-input v-model="follow.Speed4" placeholder="" type="textarea" style="width:380px;"></el-input>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
+				<el-tab-pane label="下一周工作计划" name="five">
+					<el-form ref="follow" :model="follow" label-width="120px" class='Owners'>
+						<el-form-item label="下一周工作计划" class='clearfix'>
+							<el-input v-model="follow.nextPlan" placeholder="" type="textarea" style="width:340px;"></el-input>
 						</el-form-item>
 					</el-form>
 				</el-tab-pane>
@@ -380,6 +469,15 @@
 			<el-button size="small" type="primary" @click="qrxg()">确 定</el-button>
 		</span>
 		</el-dialog>
+		<el-dialog title="下一周工作计划" :visible.sync="dialogVisibles" width="384px">
+			<span style="display: block;
+    width: 100%;
+    word-wrap: break-word;">{{texts}}</span>
+			<span slot="footer" class="dialog-footer">
+		    <el-button size="small" @click="dialogVisibles = false">取 消</el-button>
+		    <el-button size="small" type="primary" @click="dialogVisibles = false">确 定</el-button>
+		  </span>
+		</el-dialog>
 	</div>
 </template>
 <script>
@@ -389,6 +487,7 @@
 		data() {
 			return {
 				activeName11: 'first',
+				aitijhL:'1',
 				xm: false,
 				logList: [], //日志列表
 				qustionList: [],
@@ -410,6 +509,10 @@
 					leaderTel: '', //领导人电话
 					fugle: '', //主要领导
 					fugleTel: '', //主要领导电话
+					jtld:'',//集团领导
+					jtldTel:'',//集团领导电话
+					jtfzr:'',//集团负责人
+					jtfzrTel:'',//集团负责人电话
 				}, //联系人
 				plan: {
 					Point_GCKXXYJBGPF: '', //
@@ -483,6 +586,7 @@
 					Speed4: '', //进度
 					money4: '', //金额
 					Speed4: '', //进度
+					nextPlan:'',//下一周工作计划
 				}, //后续计划
 				optionsdata: [{
 					value: 1,
@@ -502,11 +606,13 @@
 				jhrow: [],
 				id: '',
 				pid: '',
+				dialogVisibles:false,
 				Check: false,
 				jihua:[],
 				Start:false,
 				packing:[],
 				newPack:[],
+				texts:'',
 				uId:"00000000-0000-0000-0000-000000000000"
 			}
 		},
@@ -520,6 +626,10 @@
 			this.getlist(this.pagesizs, this.pages, this.search)
 		},
 		methods: {
+			qs(tex) {
+				this.texts = tex
+				this.dialogVisibles = true
+			},
 			//节点获取
 			getlistq(){
 				this.$get(Api.getlistq).then(res=>{
@@ -737,6 +847,24 @@
 						return
 					}
 				}
+				if(this.rows.ComLeadTEL != '') {
+					if(!this.$isTel(this.rows.ComLeadTEL)) {
+						this.$message({
+							message: '请输入集团公司分管领导电话',
+							type: 'warning'
+						});
+						return
+					}
+				}
+				if(this.rows.ComPrincipalTEL != '') {
+					if(!this.$isTel(this.rows.ComPrincipalTEL)) {
+						this.$message({
+							message: '请输入集团公司主要负责人电话',
+							type: 'warning'
+						});
+						return
+					}
+				}
 
 				this.loading = true
 				this.$post(Api.conedit, {
@@ -751,7 +879,11 @@
 					"Principal": this.rows.Principal,
 					"PrincipalTEL": this.rows.PrincipalTEL,
 					"Leader": this.rows.Leader,
-					"LeaderTEL": this.rows.LeaderTEL
+					"LeaderTEL": this.rows.LeaderTEL,
+					"ComLead": this.rows.ComLead,
+				    "ComLeadTEL": this.rows.ComLeadTEL,
+				    "ComPrincipal": this.rows.ComPrincipal,
+				    "ComPrincipalTEL": this.rows.ComPrincipalTEL
 				}).then(res => {
 					console.log(res)
 					if(res.state == 200) {
@@ -856,6 +988,17 @@
 			},
 			//添加弹框
 			adds() {
+				this.aitijhL='1'
+				this.aitives='1'
+				this.follow.money1=''
+				this.follow.money2=''
+				this.follow.money3=''
+				this.follow.money4=''
+				this.follow.Speed1=''
+				this.follow.Speed2=''
+				this.follow.Speed3=''
+				this.follow.Speed4=''
+				this.follow.nextPlan
 				for(var i = 0;i<this.newPack.length;i++){
 					this.newPack[i].Schedule=''
 				}
@@ -884,15 +1027,6 @@
 						return
 					}
 				}
-				//				for(let k in this.formLabelAlign) {
-				//					if(this.formLabelAlign[k] == '') {
-				//						this.$message({
-				//							message: '联系人参数不能为空',
-				//							type: 'warning'
-				//						});
-				//						return
-				//					}
-				//				}
 				if(this.formLabelAlign.fTel != '') {
 					if(!this.$isTel(this.formLabelAlign.fTel)) {
 						this.$message({
@@ -948,14 +1082,15 @@
 						"IndustryID": this.project.value2,
 						"InvestMoney": this.project.jhtz,
 						"ComemenceDate": this.project.dates,
-						"Q1Invest": '',
-						"Q2Invest": '',
-						"Q3Invest": '',
-						"Q4Invest": '',
-						"Q1Memo": '',
-						"Q2Memo": '',
-						"Q3Memo": '',
-						"Q4Memo": ''
+						"Q1Invest": this.follow.money1,
+						"Q2Invest": this.follow.money2,
+						"Q3Invest": this.follow.money3,
+						"Q4Invest": this.follow.money4,
+						"Q1Memo": this.follow.Speed1,
+						"Q2Memo": this.follow.Speed2,
+						"Q3Memo": this.follow.Speed3,
+						"Q4Memo": this.follow.Speed4,
+						"NextPlan":this.follow.nextPlan
 					},
 					"PointSchedules":this.newPack,
 					"Contacts": {
@@ -969,7 +1104,11 @@
 						"Principal": this.formLabelAlign.leader,
 						"PrincipalTEL": this.formLabelAlign.leaderTel,
 						"Leader": this.formLabelAlign.fugle,
-						"LeaderTEL": this.formLabelAlign.fugleTel
+						"LeaderTEL": this.formLabelAlign.fugleTel,
+						"ComLead": this.formLabelAlign.jtld,
+					    "ComLeadTEL": this.formLabelAlign.jtldTel,
+					    "ComPrincipal":this.formLabelAlign.jtfzr ,
+					    "ComPrincipalTEL":this.formLabelAlign.jtfzrTel 
 					}
 				}).then(res => {
 					if(res.state == 200) {
@@ -1143,16 +1282,17 @@
 					});
 			},
 			//后续计划弹框
-			followUp(id, q1, q2, q3, q4, m1, m2, m3, m4) {
+			followUp(id, q1, q2, q3, q4, m1, m2, m3, m4,nextPlan) {
 				this.id = id
 				this.follow.money1 = q1 //金额
-				this.follow.Speed1 = m1, //进度
+				this.follow.Speed1 = m1 //进度
 					this.follow.money2 = q2 //金额
-				this.follow.Speed2 = m2, //进度
+				this.follow.Speed2 = m2 //进度
 					this.follow.money3 = q3 //金额
-				this.follow.Speed3 = m3, //进度
+				this.follow.Speed3 = m3 //进度
 					this.follow.money4 = q4 //金额
-				this.follow.Speed4 = m4, //进度
+				this.follow.Speed4 = m4 //进度
+				this.follow.nextPlan = nextPlan
 					this.ups = true
 			},
 			//确认后续计划
@@ -1167,7 +1307,8 @@
 					"Q1Memo": this.follow.Speed1,
 					"Q2Memo": this.follow.Speed2,
 					"Q3Memo": this.follow.Speed3,
-					"Q4Memo": this.follow.Speed4
+					"Q4Memo": this.follow.Speed4,
+					"NextPlan":this.follow.nextPlan
 				}).then(res => {
 					console.log(res)
 					if(res.state == 200) {
@@ -1253,6 +1394,43 @@
 					}
 				})
 			},
+			//删除
+			dels(id){
+				this.$confirm("将永久删除, 是否继续?", "提示", {
+						confirmButtonText: "确定",
+						cancelButtonText: "取消",
+						type: "warning"
+					})
+					.then(() => {
+						this.loading = true;
+						this.$get(Api.deletepro + "/" + id)
+							.then(response => {
+								console.log(response)
+								if(response.data.state == 200) {
+									this.pages = 1
+									this.loading = false
+									this.search == ''
+									this.getlist(this.pagesizs, this.pages, this.search)
+									this.$message({
+										message: "删除成功",
+										type: "success"
+									});
+								} else {
+									this.loading = false;
+									this.$message.error(response.data.errmsg);
+								}
+							})
+							.catch(err => {
+								this.loading = false;
+							});
+					})
+					.catch(() => {
+						this.$message({
+							type: "info",
+							message: "已取消删除"
+						});
+					});
+			}
 		}
 	}
 </script>
