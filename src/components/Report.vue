@@ -47,13 +47,14 @@
 						<button class="btn1 Info mini" style="margin-bottom: 2px;" @click='Excel'>导出Excel</button>
 						<button class="btn1 Info mini" style="margin-bottom: 2px;" @click='print'>打印</button>
 						<button class="btn1 Info mini" style="margin-bottom: 2px;" @click='colTrue'>设置显示列</button>
+						<!--<button class="btn1 Info mini" style="margin-bottom: 2px;" @click='colTrue'>点击放大</button>-->
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="panel">
 			<div style="font-size: 18px;text-align: center;
-				margin: 15px;"> {{Pank.Moth|date}}月份共{{Pank.Prophase}}个前期项目，{{Pank.Normal}}个项目正常推进，{{Pank.Exec}}个项目未按序时推进，其中{{Pank.POne}}个项目滞后1个月，{{Pank.PTwo}}个项目滞后2个月，{{Pank.PThree}}个项目滞后3个月以上</div>
+				margin: 15px;" v-if="Pank.IsOv"> {{Pank.Moth|date}}月份共{{Pank.Prophase}}个前期项目，{{Pank.Normal}}个项目正常推进，{{Pank.Exec}}个项目未按序时推进，其中{{Pank.POne}}个项目滞后1个月，{{Pank.PTwo}}个项目滞后2个月，{{Pank.PThree}}个项目滞后3个月以上</div>
 			<el-table :data="tableData5" :row-class-name="tableRowClassName" :cell-class-name="cell" height="550" border style="width: 100%" class='tables'>
 				<!--<el-table-column fixed prop='ProjectInfo.ProjectName' label="项目名称">
 					</el-table-column>
@@ -74,27 +75,23 @@
 						</template>
 					</el-table-column>-->
 				<el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList' :key='index' width='80' v-if='item.IsColumn'>
-					<!--<div  v-if="item.MultiColumn">
-						<el-table-column :label="items.Caption"  v-for='(items,index) in item.Children' :key='index' v-if="item.MultiColumn">
+						
+						<el-table-column :label="items.Caption"   v-for='(items,index) in item.Children' :key='index' v-if="item.MultiColumn">
 							<template slot-scope='scope'>
-								<div>{{scope.row[item.ColName.substr(0, item.ColName.indexOf('.'))][item.ColName.substr(item.ColName.indexOf('.')+1)]}}</div>
+								<div>{{getValue(scope.row,items.ColName)}}</div>
 							</template>
 						</el-table-column>
-					</div>
-					<div v-else="">-->
-						<template slot-scope='scope'>
+					
+					<template slot-scope='scope' v-if="!(item.MultiColumn)">
 							<div v-if='item.IsPoint'>
-								<div class="borderBottom" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['sch_'+item.ColName]}}</div>
-								<div :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['exc_'+item.ColName]}}</div>
+								<div class="borderBottom  heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['sch_'+item.ColName]}}</div>
+								<div class="heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['exc_'+item.ColName]}}</div>
 							</div>
 							<div v-else="">
-								{{getValue(scope.row,item.ColName)}}
-								<!--{{item.ColName.substr(item.ColName.indexOf('.')+1)}}-->
-								<!--{{scope.row[item.ColName.substr(0, item.ColName.indexOf('.'))]}}-->
+								<span v-if='item.ShowModal' @click='qs(getValue(scope.row,item.ColName))'>{{getValue(scope.row,item.ColName)}}</span>
+								<span v-else="">{{getValue(scope.row,item.ColName)}}</span>
 							</div>
 						</template>
-					<!--</div>-->
-					
 					<!--<template slot-scope='scope' v-else="">
 							<div>{{scope.row.ProjectInfo.ProjectName}}</div>
 						</template>-->
@@ -200,7 +197,7 @@
 					<div>
 						<el-form ref="ReportCols" label-width="180px" class='Owners'>
 							<el-form-item :label="item.Caption" v-for='(item,index) in colList' :key='index'>
-								<el-checkbox v-model="item.IsColumn">是否显示</el-checkbox>
+								<el-checkbox v-model="item.IsColumn" :disabled="item.Caption === '项目名称'">是否显示</el-checkbox>
 							</el-form-item>
 						</el-form>
 					</div>
@@ -221,12 +218,12 @@
 		<div id="print" v-show='false'>
 			<table class="prinTable">
 				<thead>
-					<tr>
-						<td rowspan="2">项目名称</td>
-						<td rowspan="2">计划/实际</td>
-						<td rowspan="2">年度计划投资</td>
-						<td rowspan="2">计划开工月份</td>
-						<!--<td rowspan="2" width="80px">《规划选址及用地意见书》批复</td>
+				<tr>
+					<td rowspan="2">项目名称</td>
+					<td rowspan="2">计划/实际</td>
+					<td rowspan="2">年度计划投资</td>
+					<td rowspan="2">计划开工月份</td>
+					<!--<td rowspan="2" width="80px">《规划选址及用地意见书》批复</td>
 					<td rowspan="2" width="80px">农转用手续及供地批复</td>
 					<td rowspan="2" width="80px">土地出让合同（招投标项目填写</td>
 					<td rowspan="2" width="80px">土地使用权证</td>
@@ -243,29 +240,29 @@
 					<td rowspan="2" width="80px">《建设工程规划许可证》批复</td>
 					<td rowspan="2" width="80px">施工监理人员备案</td>
 					<td rowspan="2" width="80px">《施工许可证》批复</td>-->
-						<td rowspan="2" width="80px" v-for='(item,index) in colList' :key='index'>{{item.Caption}}</td>
-						<td rowspan="2">当前进展情况及存在问题</td>
-						<td rowspan="2">下一周工作计划</td>
-						<td colspan="8">后续在建阶段工作计划</td>
-						<td colspan="3">责任管理部门</td>
-						<td colspan="3">业主单位</td>
-					</tr>
-					<tr>
-						<td>第一季度完成投资</td>
-						<td>第一季度期末形象进度</td>
-						<td>第二季度完成投资</td>
-						<td>第二季度期末形象进度</td>
-						<td>第三季度完成投资</td>
-						<td>第三季度期末形象进度</td>
-						<td>第四季度完成投资</td>
-						<td>第四季度期末形象进度</td>
-						<td>单位名称</td>
-						<td>项目负责人</td>
-						<td>具体责任人</td>
-						<td>单位名称</td>
-						<td>项目负责人</td>
-						<td>具体责任人</td>
-					</tr>
+					<td rowspan="2" width="80px" v-for='(item,index) in colList' :key='index'>{{item.Caption}}</td>
+					<td rowspan="2">当前进展情况及存在问题</td>
+					<td rowspan="2">下一周工作计划</td>
+					<td colspan="8">后续在建阶段工作计划</td>
+					<td colspan="3">责任管理部门</td>
+					<td colspan="3">业主单位</td>
+				</tr>
+				<tr>
+					<td>第一季度完成投资</td>
+					<td>第一季度期末形象进度</td>
+					<td>第二季度完成投资</td>
+					<td>第二季度期末形象进度</td>
+					<td>第三季度完成投资</td>
+					<td>第三季度期末形象进度</td>
+					<td>第四季度完成投资</td>
+					<td>第四季度期末形象进度</td>
+					<td>单位名称</td>
+					<td>项目负责人</td>
+					<td>具体责任人</td>
+					<td>单位名称</td>
+					<td>项目负责人</td>
+					<td>具体责任人</td>
+				</tr>
 				</thead>
 				<tbody>
 					<tr v-for='(item,index) in tableData5' :key='index'>
@@ -448,18 +445,6 @@
 			this.getdata(this.pagesizs, this.pages, this.search, this.grade, this.trade, this.owner, this.jindu,this.months)
 		},
 		methods: {
-			//			renderHeader(h,{ column,$index }) {
-			//		         return (
-			//		             <div>
-			//		                <span>文字</span>
-			//		                <el-button>按钮</el-button>
-			//		             </div>
-			//		         )
-			//		   },
-			//			renderHeader(h, { column,$index }) {
-			//			    return h("span",[column.label])
-			//			},
-			//			},
 			tofarmt(vaue) {
 				if(vaue == '/') {
 					return vaue
@@ -473,13 +458,18 @@
 
 			},
 			getValue(ojb,strkey){
-				console.log(ojb)
-				var strkeyArr = strkey.split('.').filter(item=>item!=='');
-				if(strkeyArr.length){
-					if(strkeyArr[0] in ojb){
-						var newObj = ojb[strkeyArr[0]]
-						return strkeyArr.length>1?getValue(newObj,strkeyArr.slice(1).join('.')):newObj
+				if(strkey==''){
+					return ''
+				}else{
+					var strkeyArr = strkey.split('.').filter(item=>item!=='');
+					var newObj = strkeyArr[0]
+					var newObj1 = strkeyArr[1]
+					if(ojb[newObj]){
+						return ojb[newObj][newObj1]?ojb[newObj][newObj1]:''
+					}else{
+						return ''
 					}
+					
 				}
 			},
 			qs(tex) {

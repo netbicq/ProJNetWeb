@@ -56,6 +56,16 @@ Vue.filter('date', function (value) {
 	return y + '.' + (m < 10 ? "0" + m : m)
 //	+ ':' + f +':' + m;
 })
+//Vue.filter('getValue', function (ojb,strkey){
+//	if(ojb==''){
+//		return ''
+//	}else{
+//		var strkeyArr = ojb.split('.').filter(item=>item!=='');
+//		var s = strkeyArr[0]
+//		var b = strkeyArr[1]
+//	  return strkey[s][b]
+//	}
+//})
 /* eslint-disable no-new */
 new Vue({
 	el: '#app',
