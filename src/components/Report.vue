@@ -56,40 +56,29 @@
 			<div style="font-size: 18px;text-align: center;
 				margin: 15px;" v-if="Pank.IsOv"> {{Pank.Moth|date}}月份共{{Pank.Prophase}}个前期项目，{{Pank.Normal}}个项目正常推进，{{Pank.Exec}}个项目未按序时推进，其中{{Pank.POne}}个项目滞后1个月，{{Pank.PTwo}}个项目滞后2个月，{{Pank.PThree}}个项目滞后3个月以上</div>
 			<el-table :data="tableData5" :row-class-name="tableRowClassName" :cell-class-name="cell" height="550" border style="width: 100%" class='tables'>
-				<!--<el-table-column fixed prop='ProjectInfo.ProjectName' label="项目名称">
-					</el-table-column>
-					<el-table-column fixed label="计划/实际">
-						<template slot-scope='scope'>
-							<div class="borderBottom">计划</div>
-							<div>实际</div>
-						</template>
-					</el-table-column>
-					<el-table-column label="年度计划投资">
-						<template slot-scope='scope'>
-							<div>{{scope.row.ProjectInfo.InvestMoney}}</div>
-						</template>
-					</el-table-column>
-					<el-table-column label="计划开工月份">
-						<template slot-scope='scope'>
-							<div>{{scope.row.ProjectInfo.ComemenceDate|yy}}</div>
-						</template>
-					</el-table-column>-->
 				<el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList' :key='index' width='80' v-if='item.IsColumn'>
 						
 						<el-table-column :label="items.Caption"   v-for='(items,index) in item.Children' :key='index' v-if="item.MultiColumn">
 							<template slot-scope='scope'>
-								<div>{{getValue(scope.row,items.ColName)}}</div>
+								<div>{{getValue(scope.row,items.ColName) | yy}}</div>
 							</template>
 						</el-table-column>
 					
 					<template slot-scope='scope' v-if="!(item.MultiColumn)">
+							
 							<div v-if='item.IsPoint'>
 								<div class="borderBottom  heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['sch_'+item.ColName]}}</div>
 								<div class="heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['exc_'+item.ColName]}}</div>
 							</div>
 							<div v-else="">
-								<span v-if='item.ShowModal' @click='qs(getValue(scope.row,item.ColName))'>{{getValue(scope.row,item.ColName)}}</span>
-								<span v-else="">{{getValue(scope.row,item.ColName)}}</span>
+								<div v-if='item.Caption=="计划/实际"'>
+									<div class="borderBottom">计划</div>
+									<div>实际</div>
+								</div>
+								<div v-else="">
+									<span v-if='item.ShowModal' @click='qs(getValue(scope.row,item.ColName))'>{{getValue(scope.row,item.ColName)}}</span>
+									<span v-else="">{{getValue(scope.row,item.ColName)| yy}}</span>
+								</div>
 							</div>
 						</template>
 					<!--<template slot-scope='scope' v-else="">
@@ -193,7 +182,7 @@
 				</el-pagination>
 			</div>
 		</div>
-		<el-dialog title="列设置" :visible.sync="userTip" width="340px">
+		<el-dialog title="列设置" :visible.sync="userTip" width="340px" :close-on-click-modal='false'>
 					<div>
 						<el-form ref="ReportCols" label-width="180px" class='Owners'>
 							<el-form-item :label="item.Caption" v-for='(item,index) in colList' :key='index'>
@@ -409,6 +398,7 @@
 		name: 'Report',
 		data() {
 			return {
+				SchExe:'SchExe',
 				dialogVisible: false,
 				texts: '',
 				search: '', //搜索
@@ -703,6 +693,7 @@
 			confirmAdd(){
 				sessionStorage.colList=JSON.stringify(this.colList)
 				this.userTip=false
+				this.getdata(this.pagesizs, this.pages, this.search, this.grade, this.trade, this.owner, this.jindu,this.months)
 			}
 		}
 	}

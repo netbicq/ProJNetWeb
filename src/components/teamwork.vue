@@ -22,7 +22,10 @@
 					<el-table :data="tableData" stripe style="width: 100%" align="center">
 						<el-table-column label="标题" prop="Proiect_Teamwork.Title">
 						</el-table-column>
-						<el-table-column label="时间" prop="Proiect_Teamwork.Time">
+						<el-table-column label="时间">
+							<template slot-scope='scope'>
+								{{scope.row.Proiect_Teamwork.Time|yy}}
+							</template>
 						</el-table-column>
 						<el-table-column label="人员" prop="Proiect_Teamwork.Personnel">
 						</el-table-column>
@@ -35,9 +38,9 @@
 										操作<i class="el-icon-arrow-down el-icon--right"></i>
 									</el-button>
 									<el-dropdown-menu slot="dropdown">
-										<!--<el-dropdown-item>
-											<button class="btn Success mini" @click="fnEditUserTip(scope.row.Basic_Point.ID,scope.row.Basic_Point.PointName,scope.row.Basic_Point.ColName,scope.row.Basic_Point.PointOrderIndex)">修改</button>
-										</el-dropdown-item>-->
+										<el-dropdown-item>
+											<button class="btn Success mini" @click="look(scope.row.Proiect_Teamwork.Title,scope.row.Proiect_Teamwork.Time,scope.row.Proiect_Teamwork.Personnel,scope.row.Proiect_Teamwork.Contents,scope.row.Encolos)">查看</button>
+										</el-dropdown-item>
 										<el-dropdown-item>
 											<button class="btn Danger mini" @click="deluser(scope.row.Proiect_Teamwork.ID)">删除</button>
 										</el-dropdown-item>
@@ -71,7 +74,7 @@
 							</el-form-item>
 							<el-form-item label="附件：">
 								<div id="shangbao">
-									<el-upload id='inputs' :headers="myHeaders" multiple accept="image/*"  :action=host  :before-upload="beforeAvatarUpload" :file-list="fileList" list-type="picture-card" :on-preview="handlePictureCardPreview" :on-success="handleAvatarSuccess" :on-remove="handleRemove">
+									<el-upload id='inputs' :headers="myHeaders"    :action=host  :before-upload="beforeAvatarUpload" :file-list="fileList" list-type="picture-card" :on-preview="handlePictureCardPreview" :on-success="handleAvatarSuccess" :on-remove="handleRemove">
 										<i class="el-icon-plus"></i>
 									</el-upload>
 									<el-dialog :visible.sync="dialogVisible">
@@ -86,6 +89,35 @@
                     <el-button type="primary" @click="confirmAdd()" size="small">确 定</el-button>
                 </span>
 				</el-dialog>
+				<el-dialog title="查看" :visible.sync="userTip1" width="384px">
+					<div>
+						<el-form ref="teamwork" :model="teamwork" label-width="60px" class='Owners'>
+							<el-form-item label="标题：">
+								<el-input v-model="teamwork.Title" placeholder="请输入标题" style="width:275px;"></el-input>
+							</el-form-item>
+							<el-form-item label="时间：">
+								<el-date-picker v-model="teamwork.Time" type="date" style="width:275px;" placeholder="请输入时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
+								</el-date-picker>
+							</el-form-item>
+							<el-form-item label="人员：">
+								<el-input v-model="teamwork.Personnel" placeholder="请输入人员" style="width:275px;"></el-input>
+							</el-form-item>
+							<el-form-item label="内容：">
+								<el-input class='neir' v-model="teamwork.Contents" type='textarea' :autosize="{ minRows: 2, maxRows: 10}" placeholder="请输入内容" style="width:275px;"></el-input>
+							</el-form-item>
+							<el-form-item label="附件：">
+								<div v-for='item in tups'>
+									<img width="100%" :src="Host+item.substr(1)"  alt="">
+								</div>
+								
+							</el-form-item>
+						</el-form>
+					</div>
+					<span slot="footer" class="dialog-footer">
+                    <el-button   @click="userTip1 = false" size="small">取 消</el-button>
+                    <el-button type="primary" @click="looks()" size="small">确 定</el-button>
+                </span>
+				</el-dialog>
 		</div>
 	</div>
 </template>
@@ -96,6 +128,8 @@
 		name: "teamwork",
 		data() {
 			return {
+				Host:Host,
+				userTip1:false,
 				host: Api.files,
 				loading: false,
 				tableData: [], //列表
@@ -118,6 +152,7 @@
 				myHeaders: {
 					token: sessionStorage.Token,
 				},
+				tups:[]
 			}
 		},
 		mounted() {
@@ -207,9 +242,9 @@
 		        const isJPG = file.type === "image/jpeg";
 				const isPNG = file.type === "image/png";
 				const isLt2M = file.size / 1024 / 1024 < 10;
-//				if(!isJPG && !isPNG) {
-//					this.$message.error("上传图片必须是JPG/PNG 格式!");
-//				}
+				if(!isJPG && !isPNG) {
+					this.$message.error("上传图片必须是JPG/PNG 格式!");
+				}
 				if(!isLt2M) {
 					this.$message.error("上传图片大小不能超过 10MB!");
 				}
@@ -217,6 +252,7 @@
 		    },
 		    //上传成功
 		    handleAvatarSuccess(res, file) {
+		    	console.log(file)
 		    	this.fileList.push(file)
 		    },
 		    //上传移除
@@ -226,6 +262,7 @@
 		    },
 		    //文件列表中已上传的文件时
 		    handlePictureCardPreview(file) {
+		    	console.log(file)
 		    	this.dialogImageUrl = file.url;
 		        this.dialogVisible = true;
 		    },
@@ -267,6 +304,15 @@
 							message: "已取消删除"
 						});
 					});
+			},
+			look(Title,Time,Personnel,Contents,ti){
+				this.teamwork.Title = Title
+				this.teamwork.Time = Time
+				this.teamwork.Personnel = Personnel
+				this.teamwork.Contents = Contents
+				this.tups = ti
+				console.log(this.tups)
+				this.userTip1= true
 			},
 		}
 	}

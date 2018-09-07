@@ -41,6 +41,9 @@ Vue.prototype.$isCard= function (str) {
 Vue.filter('yy', function (value) {
   if (!value) return ''
   let dates = new Date(value);
+  if(dates=='Invalid Date'){
+  	return value
+  }
 	let y = dates.getFullYear()
 	let m = dates.getMonth() + 1;
 	let d = dates.getDate();
