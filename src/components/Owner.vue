@@ -8,6 +8,7 @@
 			<div class="panel">
 				<div class="panel-heading clearfix">
 					<button class="btn fl Green mini" @click="adds">新建用户</button>
+					<button style="margin-left: 15px;" class="btn fl Warning mini" v-if='Messagew' @click="meggse">群发按钮</button>
 					<div class="search clearfix fr">
 						<el-input v-model="search" placeholder="请输入单位名称"></el-input>
 						<button class="btn Info mini" @click='filter' style="margin-bottom: 2px;">查询</button>
@@ -17,6 +18,8 @@
 		</div>
 		<div class="panel">
 			<el-table :data="tableData5" style="width: 100%">
+				<el-table-column type="index" width="50">
+				</el-table-column>
 				<el-table-column label="单位名称" prop="OwnerInfo.OwnerName">
 				</el-table-column>
 				<el-table-column label="申请日期" prop="">
@@ -128,6 +131,18 @@
 			<el-button size="small" type="primary" @click="reset()">确 定</el-button>
 		</span>
 		</el-dialog>
+		<el-dialog title="群发短信" :visible.sync="masStext" width="424px">
+			<el-form ref="formLabelAlign" :model="formLabelAlign" label-width="60px" class='Owners'>
+				<el-form-item label="月度：">
+					<el-date-picker v-model="montes" type="month" placeholder="选择月" style="width:315px;" format="yyyy 年 MM 月 " value-format="yyyy-MM">
+					</el-date-picker>
+				</el-form-item>
+			</el-form>
+			<span slot="footer" class="dialog-footer">
+			<el-button size="small" @click="masStext = false">取 消</el-button>
+			<el-button size="small" type="primary" @click="GroupSMS()">确 定</el-button>
+		</span>
+		</el-dialog>
 	</div>
 
 </template>
@@ -137,6 +152,8 @@
 		name: 'Owner',
 		data() {
 			return {
+				montes: '',
+				masStext: false,
 				loadings: false,
 				tableData5: [],
 				search: '', //搜索
@@ -156,13 +173,43 @@
 				total: 1, //总条数
 				pages: 1, //页码
 				passwords: '', //重置密码
-				ID:''
+				ID: '',
+				Messagew:false
 			}
 		},
 		created() {
+			this.Messagew = sessionStorage.Messagew === 'true' ? true : false
 			this.getlist(this.pagesizs, this.pages, this.search)
 		},
 		methods: {
+			//群发弹框
+			meggse() {
+				this.montes=''
+				this.masStext = true
+			},
+			//群发短信
+			GroupSMS() {
+				if(this.montes==''){
+					this.$message({
+						message: '参数不能为空',
+						type: 'warning'
+					});
+					return
+				}
+				this.loadings=true
+				this.$get(Api.allsend+'/'+this.montes).then(res=>{
+					if(res.data.state==200){
+						this.$message({
+							message: "通知成功",
+							type: "success"
+						});
+						this.loadings=false
+					}else{
+						this.loadings = false
+						this.$message.error(res.data.errmsg);
+					}
+				})
+			},
 			//获取业主列表
 			getlist(pagesizs, pages, search) {
 				this.loadings = true
@@ -205,14 +252,14 @@
 					});
 					return
 				}
-				if(!this.$isTel(this.formLabelAlign.contacTel)){
+				if(!this.$isTel(this.formLabelAlign.contacTel)) {
 					this.$message({
 						message: '请输入正确的联系人电话',
 						type: 'warning'
 					});
 					return
 				}
-				if(!this.$isTel(this.formLabelAlign.UnitTel)){
+				if(!this.$isTel(this.formLabelAlign.UnitTel)) {
 					this.$message({
 						message: '请输入正确的负责人电话',
 						type: 'warning'
@@ -272,14 +319,14 @@
 					});
 					return
 				}
-				if(!this.$isTel(this.formLabelAlign.contacTel)){
+				if(!this.$isTel(this.formLabelAlign.contacTel)) {
 					this.$message({
 						message: '请输入正确的联系人电话',
 						type: 'warning'
 					});
 					return
 				}
-				if(!this.$isTel(this.formLabelAlign.UnitTel)){
+				if(!this.$isTel(this.formLabelAlign.UnitTel)) {
 					this.$message({
 						message: '请输入正确的负责人电话',
 						type: 'warning'
@@ -301,13 +348,11 @@
 					"LeaderTEL": ""
 				}).then(res => {
 					if(res.state == 200) {
-						this.pages = 1
 						this.edits = false
 						this.loadings = false
-						this.search == ''
 						this.getlist(this.pagesizs, this.pages, this.search)
 						this.$message({
-							message: "添加成功",
+							message: "修改成功",
 							type: "success"
 						});
 					} else {
@@ -320,12 +365,12 @@
 			},
 			//重置密码弹框
 			fnResetPwdTip(id) {
-				this.ID=id
+				this.ID = id
 				this.pass = true
 			},
 			//确认重置密码
 			reset() {
-				if(this.passwords==''){
+				if(this.passwords == '') {
 					this.$message.error("密码不能为空");
 					return false;
 				}
@@ -355,21 +400,18 @@
 						this.loading = false;
 						this.$message.error(error);
 					});
-				
+
 			},
-			fnAddUserRole(id){
-				this.$get(Api.yamm+'/'+id).then(res=>{
+			fnAddUserRole(id) {
+				this.$get(Api.yamm + '/' + id).then(res => {
 					console.log(res)
-					if(res.data.state==200){
-						this.pages = 1
-						this.pages = 1
-							this.loading = false
-							this.search == ''
-							this.getlist(this.pagesizs, this.pages, this.search)
-					}else {
-							this.loading = true
-							this.$message.error(res.data.errmsg);
-						}
+					if(res.data.state == 200) {
+						this.loading = false
+						this.getlist(this.pagesizs, this.pages, this.search)
+					} else {
+						this.loading = true
+						this.$message.error(res.data.errmsg);
+					}
 				})
 			},
 			//删除
@@ -385,9 +427,7 @@
 							.then(response => {
 								console.log(response)
 								if(response.data.state == 200) {
-									this.pages = 1
 									this.loadings = false
-									this.search == ''
 									this.getlist(this.pagesizs, this.pages, this.search)
 									this.$message({
 										message: "删除成功",
@@ -419,7 +459,7 @@
 				this.pages = val
 				this.getlist(this.pagesizs, this.pages, this.search)
 			},
-			filter(){
+			filter() {
 				this.pages = 1
 				this.getlist(this.pagesizs, this.pages, this.search)
 			}

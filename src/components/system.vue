@@ -570,8 +570,10 @@
 							this.loading = false
 							this.pages = 1
 							this.search = ''
+							this.editUserTip = false;
 							this.userlist(this.pages, this.search, this.PageSize)
 						} else {
+							this.editUserTip = false;
 							this.loading = false
 							this.$message.error(res.errmsg);
 						}

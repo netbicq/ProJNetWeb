@@ -65,4 +65,8 @@ export default {
 	addnewTeam:Host+'/api/team/addnew',//	新建协调工作
 	delTeam:Host+'/api/team/delteam',//		删除指定ID的
 	getlistTeam:Host+'/api/team/getlist',//		获取协调工作列表
+	getlistqMsggse:Host+'/api/proj/getlistq',//获取是否发送短信节点
+	editsmss:Host+'/api/proj/editsmss',//
+	allsend:Host+'/api/owner/allsend',//
+	editweb:Host+'/api/report/editweb',//
 }

@@ -309,6 +309,23 @@ a {
     color: #fff;
   }
  /* 上传 */
+#shangbao .el-upload{
+	width: 160px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  border: 1px dashed #d9d9d9;
+}
+#editor2 {
+	padding-bottom: 20px;
+}
+#editor1 {
+	padding-bottom: 20px;
+}
+.addres{
+  color: red;
+  font-weight: 600;
+}
 .avatar-uploader .el-upload {
   /*border: 1px dashed #d9d9d9;*/
   border-radius: 6px;
@@ -413,14 +430,20 @@ a {
 	}
 	.prinTable span{
 		display: block;
-		line-height: 24px;
-		height: 24px;
+		line-height: 20px;
+		word-wrap:break-word;
+		padding: 5px 0;
+		display: block;
+		width: 80px;
 	}
 	.prinTable td,
 	.prinTable th {
+		position: relative;
 		text-align: center;
 		padding: 5px 0;
 		border: 1px solid #000;
+		/*display: block;*/
+		
 	}
 .sousuo{
 	
@@ -477,7 +500,62 @@ a {
 .masks{
 	position: fixed;
 	width: 100%;
-	height: 100%;
 	background: rgba(0,0,0,0.5);
 	z-index: 2003;
+}
+.el-collapse .el-collapse-item__header{
+	font-size: 18px;
+}
+.el-collapse{
+	width: 50%;
+	margin: auto;
+}
+.el-collapse .is-active{
+	font-size: 18px;
+}
+.heig{
+	border: 1px solid #C0C4CC;
+	margin-bottom: 15px;
+	height: 300px;
+}
+.vedis{
+	width: 450px;
+	height: 300px;
+}
+.tables tr td{
+	border-right: 1px solid #000 !important;
+}
+.tables .is-group td{
+	border-right: 1px solid #000 !important;
+}
+.tables td, .tables th.is-leaf{
+	border-bottom: 1px solid #000 !important;
+}
+.tables td{
+	border-right: 1px solid #000 !important;
+}
+.tables .is-leaf{
+	border-right: 1px solid #000 !important;
+}
+.tables th, .el-table__fixed-right-patch{
+	border-bottom: 1px solid #000 !important;
+}
+.tablestd, .tables th{
+    border-right: 1px solid #000!important;
+}
+.tables{
+	border: 1px solid #000!important;
+}
+/*.tables tbody .el-table__row:hover{
+	cursor:move !important;
+}*/
+.reportTable{
+	width: 100%;
+	text-align: center;
+	border-collapse:collapse;  
+	border: 1px solid #000000;
+}
+.reportTable td{
+	border-collapse:collapse;  
+	border: 1px solid #000 ;
 }

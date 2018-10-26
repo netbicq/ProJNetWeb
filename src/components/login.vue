@@ -207,6 +207,7 @@
 						sessionStorage.UserProfile = JSON.stringify(res.data.UserProfile);
 						sessionStorage.Check = res.data.Check
 						sessionStorage.Start = res.data.Start
+						sessionStorage.Messagew = res.data.Messagew
 						this.getmenu()
 					} else {
 						this.loding = false
