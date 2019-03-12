@@ -48,40 +48,14 @@
 						<button class="btn1 Info mini" style="margin-bottom: 2px;" @click='print'>打印</button>
 						<button class="btn1 Info mini" style="margin-bottom: 2px;" @click='colTrue'>设置显示列</button>
 						<button class="btn1 Info mini" style="margin-bottom: 2px;" @click='rowTrue'>数据筛选</button>
+            <button class="btn1 Info mini" style="margin-bottom: 2px;" @click='mesCall'>情况通报</button>
 						<button class="btn1 Info mini" style="margin-bottom: 2px;" @click='reportBox = true'>点击放大</button>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="panel">
-			<div style="font-size: 16px;text-align: center;margin-bottom: 15px;">{{Pank.Report1}}<el-button size="mini" round type="success" style='margin-left: 15px;' @click='edits(Pank.Report1)'>修改</el-button></div>
-			<el-collapse v-if="Pank.IsOv" v-model="activeNames" width='50%' @change="handleChange">
-			  <el-collapse-item title="报表信息:" name="1">
-			  	<table class="reportTable">
-			  		<tr>
-			  			<td>月份</td>
-			  			<td>前期项目 </td>
-			  			<td>正常项目</td>
-			  			<td>未按序时项目</td>
-			  			<td>滞后一个月</td>
-			  			<td>滞后两个月</td>
-			  			<td>滞后三个月</td>
-			  		</tr>
-			  		<tr>
-			  			<td>{{Pank.Moth|date}}</td>
-			  			<td>{{Pank.Prophase}} </td>
-			  			<td>{{Pank.Normal}}</td>
-			  			<td>{{Pank.Exec}}</td>
-			  			<td>{{Pank.POne}}</td>
-			  			<td>{{Pank.PTwo}}</td>
-			  			<td>{{Pank.PThree}}</td>
-			  		</tr>
-			  	</table>
-			  	
-			    <!--<div style="font-size: 18px;text-align: center;
-							margin: 15px;" > {{Pank.Moth|date}}月份共{{Pank.Prophase}}个前期项目，{{Pank.Normal}}个项目正常推进，{{Pank.Exec}}个项目未按序时推进，其中{{Pank.POne}}个项目滞后1个月，{{Pank.PTwo}}个项目滞后2个月，{{Pank.PThree}}个项目滞后3个月以上</div>-->
-			  </el-collapse-item>
-  			</el-collapse>
+			<div style="font-size: 24px;text-align: center;margin-bottom: 15px;">{{Pank.Report1}}<el-button size="mini" round type="success" style='margin-left: 15px;' @click='edits(Pank.Report1)'>修改</el-button></div>-->
 			
 			<el-table :data="tableDat" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell" height="550" border style="width: 100%" class='tables' >
 				<el-table-column type="index" width="50" fixed>
@@ -157,6 +131,22 @@
                     <el-button type="primary" @click="rowTip = false" size="small">确 定</el-button>
                 </span>
 				</el-dialog>
+    <el-dialog title="情况通报" :visible.sync="msg" width="750px" :close-on-click-modal='false'>
+      <div>
+        <el-form :modal="formMsg">
+          <el-form-item label="年度计划开工项目：" label-width="150px">共 {{ formMsg.YearCount }} 个</el-form-item>
+          <el-form-item label="正常推进项目：" label-width="150px">共 {{ formMsg.NormalCount }} 个</el-form-item>
+          <el-form-item label="推进滞后项目：" label-width="150px">共 {{ formMsg.DelayCount }} 个</el-form-item>
+          <el-form-item label="推进滞后项目明细：" label-width="150px">
+            <p v-for="item of formMsg.DeylayProje">{{ item }}</p>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+                    <el-button   @click="msg = false" size="small">取 消</el-button>
+                    <el-button type="primary" @click="rowTip = false" size="small">确 定</el-button>
+                </span>
+    </el-dialog>
 		<el-dialog title="" resizable border :fullscreen='true' :visible.sync="reportBox" width="100%" heigth='100%'>
 			<div style="font-size: 16px;text-align: center;margin-bottom: 15px;">{{Pank.Report1}}<el-button size="mini" round type="success" style='margin-left: 15px;' @click='edits(Pank.Report1)'>修改</el-button></div>
 			<el-collapse v-if="Pank.IsOv" v-model="activeNames" width='50%' @change="handleChange" style='margin-top: 20px;'>
@@ -348,6 +338,7 @@
 				reportBox:false,
 				SchExe:'SchExe',
 				dialogVisible: false,
+        msg: false,
 				texts: '',
 				search: '', //搜索
 				gradeList: [],
@@ -375,7 +366,8 @@
 				userTip:false,
 				ReportCols:[],//显示列
 				rowTip:false,
-				recols:[]
+				recols:[],
+        formMsg: {}
 			}
 		},
 		computed : {
@@ -391,9 +383,13 @@
 			this.Selector()
 			this.dicSelector()
 			this.dicSelector1()
-			this.getdata(this.pagesizs, this.pages, this.search, this.grade, this.trade, this.owner, this.jindu,this.months)
 		},
 		methods: {
+		  //打开情况通报
+      mesCall() {
+        this.msg = true;
+        this.getdata(this.pagesizs, this.pages, this.search, this.grade, this.trade, this.owner, this.jindu,this.months);
+      },
 			edits(title){
 				this.tableTitle = title
 				this.heads = true
@@ -495,10 +491,11 @@
 					"OrderString": "",
 					"ToExcel": false
 				}).then(res => {
-					console.log(res)
+					console.log("data", res)
 					if(res.state == 200) {
 						this.loading = false
 						this.tableData5 = res.data.ReporDynlist.Data
+            this.formMsg = res.data.DataInfo;
 						this.total = res.data.ReporDynlist.Items ? res.data.ReporDynlist.Items : 1;
 						this.Pank = res.data.Pank
 						if(sessionStorage.colList){
