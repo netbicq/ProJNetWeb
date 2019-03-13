@@ -55,8 +55,7 @@
 			</div>
 		</div>
 		<div class="panel">
-			<div style="font-size: 24px;text-align: center;margin-bottom: 15px;">{{Pank.Report1}}<el-button size="mini" round type="success" style='margin-left: 15px;' @click='edits(Pank.Report1)'>修改</el-button></div>-->
-			
+			<div style="font-size: 24px;text-align: center;margin-bottom: 15px;">{{Pank.Report1}}<el-button size="mini" round type="success" style='margin-left: 15px;' @click='edits(Pank.Report1)'>修改</el-button></div>
 			<el-table :data="tableDat" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell" height="550" border style="width: 100%" class='tables' >
 				<el-table-column type="index" width="50" fixed>
 				</el-table-column>
