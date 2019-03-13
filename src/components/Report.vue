@@ -55,7 +55,7 @@
 			</div>
 		</div>
 		<div class="panel">
-			<div style="font-size: 24px;text-align: center;margin-bottom: 15px;">{{Pank.Report1}}<el-button size="mini" round type="success" style='margin-left: 15px;' @click='edits(Pank.Report1)'>修改</el-button></div>
+			<div style="font-size: 26px;text-align: center;margin-bottom: 15px;">{{Pank.Report1}}<el-button size="mini" round type="success" style='margin-left: 15px;' @click='edits(Pank.Report1)'>修改</el-button></div>
 			<el-table :data="tableDat" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell" height="550" border style="width: 100%" class='tables' >
 				<el-table-column type="index" width="50" fixed>
 				</el-table-column>
@@ -132,6 +132,7 @@
 				</el-dialog>
     <el-dialog title="情况通报" :visible.sync="msg" width="750px" :close-on-click-modal='false'>
       <div>
+        <p style="text-align: center;font-size: 20px;"><b>{{ monthTitle }} 月情况通报</b></p>
         <el-form :modal="formMsg">
           <el-form-item label="年度计划开工项目：" label-width="150px">共 {{ formMsg.YearCount }} 个</el-form-item>
           <el-form-item label="正常推进项目：" label-width="150px">共 {{ formMsg.NormalCount }} 个</el-form-item>
@@ -147,7 +148,7 @@
                 </span>
     </el-dialog>
 		<el-dialog title="" resizable border :fullscreen='true' :visible.sync="reportBox" width="100%" heigth='100%'>
-			<div style="font-size: 16px;text-align: center;margin-bottom: 15px;">{{Pank.Report1}}<el-button size="mini" round type="success" style='margin-left: 15px;' @click='edits(Pank.Report1)'>修改</el-button></div>
+			<div style="font-size: 26px;text-align: center;margin-bottom: 15px;">{{Pank.Report1}}<el-button size="mini" round type="success" style='margin-left: 15px;' @click='edits(Pank.Report1)'>修改</el-button></div>
 			<el-collapse v-if="Pank.IsOv" v-model="activeNames" width='50%' @change="handleChange" style='margin-top: 20px;'>
 			  <el-collapse-item title="报表信息:" name="1">
 			  	<table class="reportTable">
@@ -372,7 +373,13 @@
 		computed : {
 		    tableDat() {
 		       return this.tableData5.filter(item => item.isssum == true)
-		    }
+		    },
+      monthTitle() {
+		      console.log(this.months)
+		     // let year = this.months.getFullYear();
+		     // let month = this.months.getMonth() + 1;
+		     return this.months;
+      }
 		},
 		beforeRouteLeave(to,from,next){
 			sessionStorage.removeItem('colList')
