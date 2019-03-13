@@ -380,6 +380,7 @@
 		    next();
 		},
 		created() {
+      this.getdata(this.pagesizs, this.pages, this.search, this.grade, this.trade, this.owner, this.jindu,this.months);
 			this.Selector()
 			this.dicSelector()
 			this.dicSelector1()
