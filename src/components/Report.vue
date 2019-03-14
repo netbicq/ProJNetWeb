@@ -130,17 +130,10 @@
                     <el-button type="primary" @click="rowTip = false" size="small">确 定</el-button>
                 </span>
 				</el-dialog>
-    <el-dialog title="情况通报" :visible.sync="msg" width="750px" :close-on-click-modal='false'>
+    <el-dialog title="" :visible.sync="msg" width="750px" :close-on-click-modal='false'>
       <div>
-        <p style="text-align: center;font-size: 20px;"><b>{{ monthTitle }} 月份前期项目推进情况通报</b></p>
-        <el-form :modal="formMsg">
-          <el-form-item label="年度计划开工项目：" label-width="150px">共 {{ formMsg.YearCount }} 个</el-form-item>
-          <el-form-item label="正常推进项目：" label-width="150px">共 {{ formMsg.NormalCount }} 个</el-form-item>
-          <el-form-item label="推进滞后项目：" label-width="150px">共 {{ formMsg.DelayCount }} 个</el-form-item>
-          <el-form-item label="推进滞后项目明细：" label-width="150px">
-            <p v-for="item of formMsg.DeylayProje">{{ item }}</p>
-          </el-form-item>
-        </el-form>
+        <p style="text-align: center;font-size: 29px;font-family: 'FZXiaoBiaoSong-B05S'"><b>{{ monthTitle }}月份金井湾片区前期项目推进情况通报</b></p>
+        <div style="font-family: 'FangSong_GB2312';font-size: 21px;margin-top: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ year }}年金井湾片区计划开工{{ formMsg.YearCount }}个，截至{{ aMonth }}月份，已开工项目{{ formMsg.StartCount }}个，正常推进项目{{ formMsg.NormalCount }}个，推进滞后项目{{ formMsg.DelayCount }}个。推进滞后项目分别为 <span v-for="(item, index) of formMsg.DeylayProje">{{ item }}<span v-if="index != formMsg.DeylayProje.length-1">、</span> </span>。</div>
       </div>
       <span slot="footer" class="dialog-footer">
                     <el-button   @click="msg = false" size="small">取 消</el-button>
@@ -347,6 +340,24 @@
 		    tableDat() {
 		       return this.tableData5.filter(item => item.isssum == true)
 		    },
+      aMonth() {
+        if(typeof this.months != 'string') {
+          console.log('not string');
+          let month = this.months.getMonth() + 1;
+          return month;
+        }
+        let arr = this.months.split('-');
+        return arr[1];
+      },
+      year() {
+        if(typeof this.months != 'string') {
+          console.log('not string');
+          let year = this.months.getFullYear();
+          return year;
+        }
+        let arr = this.months.split('-');
+        return arr[0];
+      },
       monthTitle() {
 		      console.log("updata", this.months)
 		     // let year = this.months.getFullYear();
@@ -355,7 +366,7 @@
           console.log('not string');
           let year = this.months.getFullYear();
           let month = this.months.getMonth() + 1;
-          return year + '-' + month
+          return year + '年' + month
         }
         return this.months;
 
@@ -525,7 +536,7 @@
 			}) {
 				//				某一行其中的一个变量applies值如果大于0，并且在第六列，即确定一个具体的单元格需要确定行和列
 				if(row.ProJBool == true && columnIndex == 1) {
-					return 'red'
+					return 'black'
 				}
 			},
 			objectSpanMethod({

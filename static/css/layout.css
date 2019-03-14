@@ -546,6 +546,9 @@ a {
 .tables{
 	border: 1px solid #000!important;
 }
+.tables .is-group {
+  color: #000!important;
+}
 /*.tables tbody .el-table__row:hover{
 	cursor:move !important;
 }*/
