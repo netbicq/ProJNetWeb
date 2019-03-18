@@ -55,11 +55,11 @@
 			</div>
 		</div>
 		<div class="panel">
-			<div style="font-size: 30px;text-align: center;margin-bottom: 15px;">{{Pank.Report1}}<el-button size="mini" round type="success" style='margin-left: 15px;' @click='edits(Pank.Report1)'>修改</el-button></div>
-			<el-table :data="tableDat" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell" height="550" border style="width: 100%" class='tables' >
-				<el-table-column type="index" width="50" fixed>
+			<div style="font-family: '仿宋';font-size: 30px;text-align: center;margin-bottom: 15px;"><b>{{Pank.Report1}}</b><el-button size="mini" round type="success" style='margin-left: 15px;' @click='edits(Pank.Report1)'>修改</el-button></div>
+			<el-table :data="tableDat" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell" height="550" border style="width: 100%;color: #000;font-family: 仿宋" class='tables' >
+				<el-table-column type="index" width="50" fixed style="font-family: '仿宋'">
 				</el-table-column>
-				<el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList' :key='index' v-if='item.IsColumn'>
+				<el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList' :key='index' v-if='item.IsColumn' style="font-family: '仿宋'">
 						<el-table-column :label="items.Caption"   v-for='(items,index) in item.Children' :key='index' v-if="item.MultiColumn" width='90'>
 							<template slot-scope='scope'>
 								<div style="white-space:pre-line">{{getValue(scope.row,items.ColName)}}</div>
@@ -132,8 +132,8 @@
 				</el-dialog>
     <el-dialog title="" :visible.sync="msg" width="750px" :close-on-click-modal='false'>
       <div>
-        <p style="text-align: center;font-size: 29px;font-family: 'FZXiaoBiaoSong-B05S'"><b>{{ monthTitle }}月份金井湾片区前期项目推进情况通报</b></p>
-        <div style="font-family: 'FangSong_GB2312';font-size: 21px;margin-top: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ year }}年金井湾片区计划开工{{ formMsg.YearCount }}个，截至{{ aMonth }}月份，已开工项目{{ formMsg.StartCount }}个，正常推进项目{{ formMsg.NormalCount }}个，推进滞后项目{{ formMsg.DelayCount }}个。推进滞后项目分别为 <span v-for="(item, index) of formMsg.DeylayProje">{{ item }}<span v-if="index != formMsg.DeylayProje.length-1">、</span> </span>。</div>
+        <p style="text-align: center;font-size: 29px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份金井湾片区前期项目推进情况通报</b></p>
+        <div style="font-family: 'FangSong_GB2312';font-size: 21px;margin-top: 14px;color: #000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ year }}年金井湾片区计划开工{{ formMsg.YearCount }}个，截至{{ aMonth }}月份，已开工项目{{ formMsg.StartCount }}个，正常推进项目{{ formMsg.NormalCount }}个，推进滞后项目{{ formMsg.DelayCount }}个。推进滞后项目分别为 <span v-for="(item, index) of formMsg.DeylayProje">{{ item }}<span v-if="index != formMsg.DeylayProje.length-1">、</span> </span>。</div>
       </div>
       <span slot="footer" class="dialog-footer">
                     <el-button   @click="msg = false" size="small">取 消</el-button>
@@ -141,8 +141,8 @@
                 </span>
     </el-dialog>
 		<el-dialog title="" resizable border :fullscreen='true' :visible.sync="reportBox" width="100%" heigth='100%'>
-			<div style="font-size: 30px;text-align: center;margin-bottom: 15px;">{{Pank.Report1}}<el-button size="mini" round type="success" style='margin-left: 15px;' @click='edits(Pank.Report1)'>修改</el-button></div>
-			<el-table :data="tableDat" :row-class-name="tableRowClassName" :cell-class-name="cell" border style="width: 100%" class='tables'>
+			<div style="font-size: 30px;text-align: center;margin-bottom: 15px;color: #000;font-family: 仿宋"><b>{{Pank.Report1}}</b><el-button size="mini" round type="success" style='margin-left: 15px;' @click='edits(Pank.Report1)'>修改</el-button></div>
+			<el-table :data="tableDat" :row-class-name="tableRowClassName" :cell-class-name="cell" border style="width: 100%;color: #000;font-family: 仿宋" class='tables' height="800">
 				<el-table-column type="index" width="50" fixed>
 				</el-table-column>
 				<el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList' :key='index' width='80' v-if='item.IsColumn||itme'>
@@ -536,7 +536,7 @@
 			}) {
 				//				某一行其中的一个变量applies值如果大于0，并且在第六列，即确定一个具体的单元格需要确定行和列
 				if(row.ProJBool == true && columnIndex == 1) {
-					return 'black'
+					return 'red'
 				}
 			},
 			objectSpanMethod({
