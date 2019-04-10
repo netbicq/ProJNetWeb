@@ -159,17 +159,15 @@
         </el-dialog>
     <el-dialog :visible.sync="dialogVisible2" width="1300px" style="padding: 0 0 ;!important">
       <div class="panel">
-        <el-table :data="tableDat2" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell" height="700" border style="width: 100%;color: #000;font-family: 仿宋" class='tables' >
+        <el-table :data="tableDat2" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell"  border style="width: 100%;color: #000;font-family: 仿宋" class='tables' >
           <el-table-column type="index" width="50" fixed style="font-family: '仿宋'"></el-table-column>
-          <el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList' :key='index' v-if='item.IsColumn' style="font-family: '仿宋'" >
+          <el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList1' :key='index' v-if='item.IsColumn' style="font-family: '仿宋';height: 200px" >
             <el-table-column :label="items.Caption"   v-for='(items,index) in item.Children' :key='index' v-if="item.MultiColumn" width='90'>
               <template slot-scope='scope'>
                 <div style="white-space:pre-line">{{getValue(scope.row,items.ColName)}}</div>
               </template>
             </el-table-column>
-
             <template slot-scope='scope' v-if="!(item.MultiColumn)">
-
               <div v-if='item.IsPoint'>
                 <div class="borderBottom  heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['sch_'+item.ColName]}}</div>
                 <div class="heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false }">{{scope.row.PointData['exc_'+item.ColName]}}</div>
@@ -383,6 +381,7 @@
 				jindu: 1,
 				loading: false,
 				colList: [],
+        colList1:[],
 				months: new Date(),
 				Pank:{},
 				userTip:false,
@@ -591,6 +590,9 @@
 						for(var i = 4 ;i<res.data.ReportCols.length-5;i++){
 							this.recols.push(res.data.ReportCols[i])
 						}
+						this.colList1 = this.colList;
+            this.colList1.splice(18,8);
+            console.log("col11111",this.colList1);
             console.log("col",this.colList);
 						console.log(this.recols)
 						this.ReportCols = res.data.ReportCols
