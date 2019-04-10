@@ -47,10 +47,12 @@ export default {
 	editafter:Host+'/api/proj/editafter',//后续计划修改
 	stateset:Host+'/api/proj/stateset',//状态管理
 	editschedule:Host+'/api/proj/editschedule',//执行计划修改
+  openproj:Host+'/api/proj/openproj',//项目取消开工
+
 	
 	reguser:Host+'/api/auth/reguser',//用户注册
 	yamm:Host+'/api/auth/yamm',//用户注册
-	getdata:Host+'/api/report/getdata',//用户注册
+	getdata:Host+'/api/report/getdata',//获取报表数据
 	basAddnew:Host+'/api/bap/addnew',//	新建标准
 	basDelbap:Host+'/api/bap/delbap',//	删除指定ID的标准
 	basEditbap:Host+'/api/bap/editbap',//		修改标准

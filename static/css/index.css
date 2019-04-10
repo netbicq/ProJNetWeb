@@ -443,7 +443,6 @@ input[disabled] {
   height: 100%;
   display: -webkit-box;
   display: -moz-box;
-  display: box;
 }
 
 .nav ul li {
@@ -761,7 +760,7 @@ input[disabled] {
     vertical-align: top!important;
 }
 .disabled .el-upload--text{
-    display: none !important!important;
+    display: none !important;
 }
 .picBoxs .content ul li img {
  	max-width: 6rem !important;

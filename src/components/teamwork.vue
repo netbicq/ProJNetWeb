@@ -53,75 +53,9 @@
 						<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pages" :page-sizes="[10, 20, 30, 40, 50, 100]" :page-size="10" layout="sizes, prev, pager, next" :total="total" background>
 						</el-pagination>
 					</div>
-					<!--<div id="editorElem" style="text-align:left;display: none"></div>-->
 				</div>
 			</div>
-			
-			<!--<el-dialog title="新建工作纪实" :visible.sync="userTip"  width="384px">
-					<div>
-						<el-form ref="teamwork" :model="teamwork" label-width="60px" class='Owners'>
-							<el-form-item label="标题：">
-								<el-input v-model="teamwork.Title" placeholder="请输入标题" style="width:275px;"></el-input>
-							</el-form-item>
-							<el-form-item label="时间：">
-								<el-date-picker v-model="teamwork.Time" type="date" style="width:275px;" placeholder="请输入时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
-								</el-date-picker>
-							</el-form-item>
-							<el-form-item label="人员：">
-								<el-input v-model="teamwork.Personnel" placeholder="请输入人员" style="width:275px;"></el-input>
-							</el-form-item>
-							<el-form-item label="内容：">
-								<el-input class='neir' v-model="teamwork.Contents" type='textarea' :autosize="{ minRows: 2, maxRows: 10}" placeholder="请输入内容" style="width:275px;"></el-input>
-							</el-form-item>
-							<el-form-item label="附件：">
-								<div id="shangbao">
-									<el-upload id='inputs' :headers="myHeaders"    :action=host  :before-upload="beforeAvatarUpload" :file-list="fileList" :on-preview="handlePictureCardPreview" :on-success="handleAvatarSuccess" :on-error='errors' :on-remove="handleRemove">
-										<i class="el-icon-plus"></i>
-									</el-upload>
-									
-								</div>
-							</el-form-item>
-						</el-form>
-					</div>
-					<span slot="footer" class="dialog-footer">
-                    <el-button   @click="userTip = false" size="small">取 消</el-button>
-                    <el-button type="primary" @click="confirmAdd()" size="small">确 定</el-button>
-                </span>
-			</el-dialog>-->
-				<!--<el-dialog title="查看" :visible.sync="userTip1" width="384px">
-					<div>
-						<el-form ref="teamwork" :model="teamwork" label-width="60px" class='Owners'>
-							<el-form-item label="标题：">
-								<el-input v-model="teamwork.Title" placeholder="请输入标题" style="width:275px;"></el-input>
-							</el-form-item>
-							<el-form-item label="时间：">
-								<el-date-picker v-model="teamwork.Time" type="date" style="width:275px;" placeholder="请输入时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
-								</el-date-picker>
-							</el-form-item>
-							<el-form-item label="人员：">
-								<el-input v-model="teamwork.Personnel" placeholder="请输入人员" style="width:275px;"></el-input>
-							</el-form-item>
-							<el-form-item label="内容：">
-								<el-input class='neir' v-model="teamwork.Contents" type='textarea' :autosize="{ minRows: 2, maxRows: 10}" placeholder="请输入内容" style="width:275px;"></el-input>
-							</el-form-item>
-							<el-form-item label="附件：">
-								<div v-for='item in tups'>
-									<img width="100%" :src="Host+item.substr(1)"  alt="" v-if="item.indexOf('img/')>0">
-									 <video id="video" controls width='100%' v-if="item.indexOf('doc/')>0">
-									  <source :src="Host+item.substr(1)" type='video/mp4' />
-									  <source :src="Host+item.substr(1)" type='video/webm' />
-									  <source :src="Host+item.substr(1)" type='video/ogg' />
-									</video> 
-								</div>
-								
-							</el-form-item>
-						</el-form>
-					</div>
-					<span slot="footer" class="dialog-footer">
-                    <el-button   @click="userTip1 = false" size="small">取 消</el-button>
-                    <el-button type="primary" @click="looks()" size="small">确 定</el-button>
-                </span>
-				</el-dialog>-->
+
 		</div>
 		<div v-show="userTip1"  @click='userTip1 = false' class='makcs'>
 				<div @click.stop='userTip1 = true'>
@@ -243,7 +177,7 @@
 		    	this.editor.create();
 		    	this.editor1 = new E("#editor1"); // 两个参数也可以传入 elem 对象，class 选择器
 		    	this.editor1.create();
-		    	this.editor1.disable()
+		    	this.editor1.disable();
 		    	
 		     })
 			

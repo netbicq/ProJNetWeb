@@ -202,7 +202,6 @@
 								<el-dropdown-item v-if='scope.row.Project_Info.State==3'>
 									<button class="btn Pink mini" @click="xiugai(scope.row.Project_Info)">修&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 改</button>
 								</el-dropdown-item>
-
 								<el-dropdown-item v-if='Start'>
 									<button class="btn Danger mini" @click="stateset(scope.row.Project_Info.ID,4)">开&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 工</button>
 								</el-dropdown-item>
@@ -218,6 +217,9 @@
 								<el-dropdown-item v-if='Messagew'>
 									<button class="btn Danger mini" @click="setMeggse(scope.row.Project_Info.ID)">配&nbsp;&nbsp;&nbsp;置&nbsp;&nbsp;&nbsp;&nbsp;短&nbsp;&nbsp;&nbsp;&nbsp;信</button>
 								</el-dropdown-item>
+                <el-dropdown-item v-if='scope.row.Project_Info.State==4'>
+                  <button class="btn Warning mini" @click="stopwork(scope.row.Project_Info.ID)">取&nbsp;&nbsp;&nbsp;消&nbsp;&nbsp;&nbsp;&nbsp;开&nbsp;&nbsp;&nbsp;&nbsp;工</button>
+                </el-dropdown-item>
 							</el-dropdown-menu>
 						</el-dropdown>
 					</template>
@@ -1512,6 +1514,21 @@
 				})
 				this.logs = false
 			},
+      //取消开工
+      stopwork(id){
+			  console.log("id",id)
+			  this.$get(Api.openproj + '/' + id).then(res => {
+			    if (res.data.state == 200){
+            this.$message({
+              message: "修改成功",
+              type: "success"
+            });
+            this.getlist(this.pagesizs, this.pages, this.search)
+          } else {
+            this.$message.error(res.errmsg);
+          }
+        })
+      },
 			//状态
 			stateset(id, type) {
 				this.$get(Api.stateset + '/' + type + '/' + id).then(res => {

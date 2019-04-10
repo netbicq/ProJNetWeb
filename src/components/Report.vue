@@ -84,7 +84,6 @@
 							</div>
 					</template>
 				</el-table-column>
-				
 			</el-table>
 			<div class="pages">
 				<el-pagination @size-change="handleSizeChange" :page-sizes="[10,20,30,40,50]" :page-size="pagesizs" :current-page="pages" @current-change="handleCurrentChange" layout="sizes,prev, pager, next" :total="total" background>
@@ -136,9 +135,61 @@
         <div style="font-family: 'FangSong_GB2312';font-size: 21px;margin-top: 14px;color: #000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ year }}年金井湾片区计划开工{{ formMsg.YearCount }}个，截至{{ aMonth }}月份，已开工项目{{ formMsg.StartCount }}个，正常推进项目{{ formMsg.NormalCount }}个，推进滞后项目{{ formMsg.DelayCount }}个。推进滞后项目分别为 <span v-for="(item, index) of formMsg.DeylayProje">{{ item }}<span v-if="index != formMsg.DeylayProje.length-1">、</span> </span>。</div>
       </div>
       <span slot="footer" class="dialog-footer">
-                    <el-button   @click="msg = false" size="small">取 消</el-button>
-                    <el-button type="primary" @click="rowTip = false" size="small">确 定</el-button>
+                    <el-button type="primary" @click="details" size="small">详情</el-button>
                 </span>
+    </el-dialog>
+
+        <el-dialog title="" :visible.sync="dialogVisible1" width="800px" align="center">
+          <p style="text-align: center;font-size: 29px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份滞后项目情况一览表</b></p>
+          <el-table :data="DelayInfos" class="tables" height="600">
+            <el-table-column prop="ProjectName" label="项目名称" width="180" align="center"></el-table-column>
+            <el-table-column label="滞后节点" width="440" align="center" >
+              <template slot-scope="scope">
+                <p v-for="(item,i) in scope.row.DelayPoints" :key="i">
+                  <span><span>{{item.PointName}}</span> 滞后了 <u style="color: red">{{item.DelayDays}}</u> 天; </span>
+                </p>
+              </template>
+            </el-table-column>
+           <el-table-column label="项目链接" width="140" align="center">
+             <template slot-scope="scope">
+               <el-button type="primary" size="mini" @click="detailsJump(scope.row.ProjectID)">详情</el-button>
+             </template>
+            </el-table-column>
+          </el-table>
+        </el-dialog>
+    <el-dialog :visible.sync="dialogVisible2" width="1300px" style="padding: 0 0 ;!important">
+      <div class="panel">
+        <el-table :data="tableDat2" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell" height="700" border style="width: 100%;color: #000;font-family: 仿宋" class='tables' >
+          <el-table-column type="index" width="50" fixed style="font-family: '仿宋'"></el-table-column>
+          <el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList' :key='index' v-if='item.IsColumn' style="font-family: '仿宋'" >
+            <el-table-column :label="items.Caption"   v-for='(items,index) in item.Children' :key='index' v-if="item.MultiColumn" width='90'>
+              <template slot-scope='scope'>
+                <div style="white-space:pre-line">{{getValue(scope.row,items.ColName)}}</div>
+              </template>
+            </el-table-column>
+
+            <template slot-scope='scope' v-if="!(item.MultiColumn)">
+
+              <div v-if='item.IsPoint'>
+                <div class="borderBottom  heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['sch_'+item.ColName]}}</div>
+                <div class="heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false }">{{scope.row.PointData['exc_'+item.ColName]}}</div>
+              </div>
+              <div v-else="">
+                <div v-if='item.Caption=="计划/实际"'>
+                  <div class="borderBottom">计划</div>
+                  <div>实际</div>
+                </div>
+                <div v-else="">
+                  <span v-if='item.ShowModal' class="spans" @click='qs(getValue(scope.row,item.ColName))'>{{getValue(scope.row,item.ColName)}}</span>
+                  <span v-else="">{{getValue(scope.row,item.ColName)}}</span>
+                </div>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+
+      </div>
+
     </el-dialog>
 		<el-dialog title="" resizable border :fullscreen='true' :visible.sync="reportBox" width="100%" heigth='100%'>
 			<div style="font-size: 30px;text-align: center;margin-bottom: 15px;color: #000;font-family: 仿宋"><b>{{Pank.Report1}}</b><el-button size="mini" round type="success" style='margin-left: 15px;' @click='edits(Pank.Report1)'>修改</el-button></div>
@@ -304,7 +355,10 @@
 				reportBox:false,
 				SchExe:'SchExe',
 				dialogVisible: false,
+        dialogVisible1:false,
+        dialogVisible2:false,
         msg: false,
+        DelayInfos:[],//滞后详情
 				texts: '',
 				search: '', //搜索
 				gradeList: [],
@@ -317,6 +371,8 @@
 				total: 1, //总条数
 				pages: 1, //页码
 				tableData5: [],
+        tableData6:[],
+        tableData7:[],
 				jinduList: [{
 					value: 1,
 					label: '全部'
@@ -340,6 +396,9 @@
 		    tableDat() {
 		       return this.tableData5.filter(item => item.isssum == true)
 		    },
+      tableDat2(){
+        return this.tableData6.filter(item => item.isssum == true)
+      },
       aMonth() {
         if(typeof this.months != 'string') {
           console.log('not string');
@@ -386,6 +445,24 @@
 
     },
 		methods: {
+		  //打开详情
+      details(){
+        this.dialogVisible1 = true;
+        console.log("this.DelayInfos",this.DelayInfos)
+        this.getdata(99999, this.pages, this.search, this.grade, this.trade, this.owner, this.jindu,this.months);
+      },
+      //详情跳转
+      detailsJump(ID){
+        this.tableData6 = [];
+        console.log("id",ID);
+        this.tableData5.forEach( res =>{
+            if (res.ProjectInfo.ID == ID){
+              this.tableData6.push(res)
+            }
+        })
+        this.dialogVisible2 = true;
+        console.log("tb6",this.tableData6)
+      },
 		  //打开情况通报
       mesCall() {
         this.msg = true;
@@ -459,7 +536,7 @@
 					"OrderString": "",
 					"ToExcel": true
 				}).then(res => {
-					console.log(res)
+					//console.log(res)
 					if(res.state == 200) {
 						this.loading = false;
 						if(res.data.ReporDynlist.ExcelResult && res.data.ReporDynlist.ExcelResult.length != 0) {
@@ -477,7 +554,8 @@
       },
 			//获取列表
 			getdata(pagesizs, pages, search, grade, trade, owner, jindu,months) {
-				this.loading = true
+				this.loading = true;
+        this.DelayInfos = [];
 				this.$post(Api.getdata, {
 					"PageSize": pagesizs,
 					"PageIndex": pages - 1,
@@ -492,23 +570,28 @@
 					"OrderString": "",
 					"ToExcel": false
 				}).then(res => {
-					console.log("data", res)
+					//console.log("data", res);
 					if(res.state == 200) {
-						this.loading = false
-						this.tableData5 = res.data.ReporDynlist.Data
+						this.loading = false;
+						this.tableData5 = res.data.ReporDynlist.Data;
+						console.log("tb5",this.tableData5)
             this.formMsg = res.data.DataInfo;
+            this.formMsg.DelayInfos.forEach( res1 =>{
+              this.DelayInfos.push(res1)
+            });
+            console.log("this.DelayInfos",this.DelayInfos)
 						this.total = res.data.ReporDynlist.Items ? res.data.ReporDynlist.Items : 1;
-						this.Pank = res.data.Pank
+						this.Pank = res.data.Pank;
 						if(sessionStorage.colList){
-//							if()
 							this.colList = JSON.parse(sessionStorage.colList) 
 						}else{
-							this.colList = res.data.ReportCols
+							this.colList = res.data.ReportCols;
 							sessionStorage.colList=JSON.stringify(this.colList)
 						}
 						for(var i = 4 ;i<res.data.ReportCols.length-5;i++){
 							this.recols.push(res.data.ReportCols[i])
 						}
+            console.log("col",this.colList);
 						console.log(this.recols)
 						this.ReportCols = res.data.ReportCols
 					} else {

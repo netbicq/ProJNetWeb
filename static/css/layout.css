@@ -305,8 +305,8 @@ a {
     background: #f0f9eb;
   }
   .el-table .red {
-    background:#F05050;
-    color: #fff;
+    background:#F05050 !important;
+    color: #fff !important;
   }
  /* 上传 */
 #shangbao .el-upload{
