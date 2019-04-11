@@ -141,18 +141,18 @@
     </el-dialog>
 
         <el-dialog title="" :visible.sync="dialogVisible1"  align="center" :fullscreen='true'>
-          <p style="text-align: center;font-size: 36px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份滞后项目情况一览表</b></p>
+          <p style="text-align: center;font-size: 48px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份滞后项目情况一览表</b></p>
           <br><br><br>
-          <el-table :data="DelayInfos" class="tables"  width="100%" style="font-size: 24px ;" >
-            <el-table-column prop="ProjectName" label="项目名称"  align="center"></el-table-column>
-            <el-table-column label="滞后节点"  align="center" >
+          <el-table :data="DelayInfos" class="tables"  style="font-size: 24px ;width: 70%" >
+            <el-table-column prop="ProjectName" label="项  目  名  称"  align="center" width="400px"></el-table-column>
+            <el-table-column label="滞  后  节  点"  align="center" >
               <template slot-scope="scope">
-                <p v-for="(item,i) in scope.row.DelayPoints" :key="i" style=" font-family: 'FangSong_GB2312';">
-                  <span><span style="font-size: 18px">{{item.PointName}}</span> <span style="font-size: 18px">滞后</span> <u style="color: red;font-size: 18px">{{item.DelayDays}}</u> <span style="font-size: 18px">天</span>; </span>
+                <p v-for="(item,i) in scope.row.DelayPoints" :key="i" style=" font-family: 'FangSong_GB2312';height: 35px" align="left">
+                  <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size: 22px">{{item.PointName}}</span> <span style="font-size: 22px">滞后</span> <u style="color: red;font-size: 22px">{{item.DelayDays}}</u> <span style="font-size: 22px">天</span>; </span>
                 </p>
               </template>
             </el-table-column>
-           <el-table-column label="项目链接"  align="center">
+           <el-table-column label="项  目  链  接"  align="center" width="200px">
              <template slot-scope="scope">
                <el-button type="primary" size="mini" @click="detailsJump(scope.row.ProjectID)">详情</el-button>
              </template>
