@@ -69,8 +69,8 @@
 					<template slot-scope='scope' v-if="!(item.MultiColumn)">
 							
 							<div v-if='item.IsPoint'>
-								<div class="borderBottom  heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['sch_'+item.ColName]}}</div>
-								<div class="heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['exc_'+item.ColName]}}</div>
+                <div class="borderBottom  heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['sch_'+item.ColName]}}</div>
+                <div class="heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['exc_'+item.ColName]}}</div>
 							</div>
 							<div v-else="">
 								<div v-if='item.Caption=="计划/实际"'>
@@ -129,37 +129,37 @@
                     <el-button type="primary" @click="rowTip = false" size="small">确 定</el-button>
                 </span>
 				</el-dialog>
-    <el-dialog title="" :visible.sync="msg" width="750px" :close-on-click-modal='false'>
+    <el-dialog title="" :visible.sync="msg" width="80%" :close-on-click-modal='false'>
       <div>
-        <p style="text-align: center;font-size: 29px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份金井湾片区前期项目推进情况通报</b></p>
-        <div style="font-family: 'FangSong_GB2312';font-size: 21px;margin-top: 14px;color: #000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ year }}年金井湾片区计划开工{{ formMsg.YearCount }}个，截至{{ aMonth }}月份，已开工项目{{ formMsg.StartCount }}个，正常推进项目{{ formMsg.NormalCount }}个，推进滞后项目{{ formMsg.DelayCount }}个。推进滞后项目分别为 <span v-for="(item, index) of formMsg.DeylayProje">{{ item }}<span v-if="index != formMsg.DeylayProje.length-1">、</span> </span>。</div>
+        <p style="text-align: center;font-size: 48px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份金井湾片区前期项目推进情况通报</b></p>
+        <div style="font-family: 'FangSong_GB2312';font-size: 36px;margin-top: 14px;color: #000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ year }}年金井湾片区计划开工<u style="color: red">{{ formMsg.YearCount }}</u>个，截至{{ aMonth }}月份，已开工项目<u style="color: red">{{ formMsg.StartCount }}</u>个，正常推进项目<u style="color: red">{{ formMsg.NormalCount }}</u>个，推进滞后项目<u style="color: red">{{ formMsg.DelayCount }}</u>个。推进滞后项目分别为 <span v-for="(item, index) of formMsg.DeylayProje"><u style="color: red">{{ item }}</u><span v-if="index != formMsg.DeylayProje.length-1">、</span> </span>。</div>
       </div>
       <span slot="footer" class="dialog-footer">
                     <el-button type="primary" @click="details" size="small">详情</el-button>
                 </span>
     </el-dialog>
 
-        <el-dialog title="" :visible.sync="dialogVisible1" width="800px" align="center">
-          <p style="text-align: center;font-size: 29px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份滞后项目情况一览表</b></p>
-          <el-table :data="DelayInfos" class="tables" height="600">
-            <el-table-column prop="ProjectName" label="项目名称" width="180" align="center"></el-table-column>
-            <el-table-column label="滞后节点" width="440" align="center" >
+        <el-dialog title="" :visible.sync="dialogVisible1"  align="center" width="80%">
+          <p style="text-align: center;font-size: 36px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份滞后项目情况一览表</b></p>
+          <el-table :data="DelayInfos" class="tables"  width="100%" style="font-size: 24px ;" >
+            <el-table-column prop="ProjectName" label="项目名称"  align="center"></el-table-column>
+            <el-table-column label="滞后节点"  align="center" >
               <template slot-scope="scope">
                 <p v-for="(item,i) in scope.row.DelayPoints" :key="i">
-                  <span><span>{{item.PointName}}</span> 滞后了 <u style="color: red">{{item.DelayDays}}</u> 天; </span>
+                  <span><span style="font-size: 18px">{{item.PointName}}</span> <span style="font-size: 18px">滞后</span> <u style="color: red;font-size: 18px">{{item.DelayDays}}</u> <span style="font-size: 18px">天</span>; </span>
                 </p>
               </template>
             </el-table-column>
-           <el-table-column label="项目链接" width="140" align="center">
+           <el-table-column label="项目链接"  align="center">
              <template slot-scope="scope">
                <el-button type="primary" size="mini" @click="detailsJump(scope.row.ProjectID)">详情</el-button>
              </template>
             </el-table-column>
           </el-table>
         </el-dialog>
-    <el-dialog :visible.sync="dialogVisible2" width="1300px" style="padding: 0 0 ;!important">
+    <el-dialog :visible.sync="dialogVisible2" width="90%" style="padding: 0 0 ;!important">
       <div class="panel">
-        <el-table :data="tableDat2" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell"  border style="width: 100%;color: #000;font-family: 仿宋" class='tables' >
+        <el-table :data="tableDat2" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell"  border style="width: 100%;color: #000;font-family: 仿宋;font-size: 21px" class='tables' >
           <el-table-column type="index" width="50" fixed style="font-family: '仿宋'"></el-table-column>
           <el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList1' :key='index' v-if='item.IsColumn' style="font-family: '仿宋';height: 200px" >
             <el-table-column :label="items.Caption"   v-for='(items,index) in item.Children' :key='index' v-if="item.MultiColumn" width='90'>
