@@ -129,23 +129,25 @@
                     <el-button type="primary" @click="rowTip = false" size="small">确 定</el-button>
                 </span>
 				</el-dialog>
-    <el-dialog title="" :visible.sync="msg" width="80%" :close-on-click-modal='false'>
-      <div>
-        <p style="text-align: center;font-size: 48px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份金井湾片区前期项目推进情况通报</b></p>
-        <div style="font-family: 'FangSong_GB2312';font-size: 36px;margin-top: 14px;color: #000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ year }}年金井湾片区计划开工<u style="color: red">{{ formMsg.YearCount }}</u>个，截至{{ aMonth }}月份，已开工项目<u style="color: red">{{ formMsg.StartCount }}</u>个，正常推进项目<u style="color: red">{{ formMsg.NormalCount }}</u>个，推进滞后项目<u style="color: red">{{ formMsg.DelayCount }}</u>个。推进滞后项目分别为 <span v-for="(item, index) of formMsg.DeylayProje"><u style="color: red">{{ item }}</u><span v-if="index != formMsg.DeylayProje.length-1">、</span> </span>。</div>
+    <el-dialog title="" :visible.sync="msg" :fullscreen='true' :close-on-click-modal='false'>
+      <div style="">
+        <br><br><br><br>
+        <p style="text-align: center;font-size: 64px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份金井湾片区前期项目推进情况通报</b></p><br><br>
+        <div style="font-family: 'FangSong_GB2312';font-size: 42px;margin-top: 14px;color: #000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ year }}年金井湾片区计划开工<u style="color: red">{{ allWork }}</u>个，截至{{ aMonth }}月份，已开工项目<u style="color: red">{{ formMsg.StartCount }}</u>个，正常推进项目<u style="color: red">{{ formMsg.NormalCount }}</u>个，推进滞后项目<u style="color: red">{{ formMsg.DelayCount }}</u>个。推进滞后项目分别为 <span v-for="(item, index) of formMsg.DeylayProje"><u style="color: red">{{ item }}</u><span v-if="index != formMsg.DeylayProje.length-1">、</span> </span>。</div>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer" class="dialog-footer" style="position:fixed; top: 90% ;right: 5%">
                     <el-button type="primary" @click="details" size="small">详情</el-button>
                 </span>
     </el-dialog>
 
-        <el-dialog title="" :visible.sync="dialogVisible1"  align="center" width="80%">
+        <el-dialog title="" :visible.sync="dialogVisible1"  align="center" :fullscreen='true'>
           <p style="text-align: center;font-size: 36px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份滞后项目情况一览表</b></p>
+          <br><br><br>
           <el-table :data="DelayInfos" class="tables"  width="100%" style="font-size: 24px ;" >
             <el-table-column prop="ProjectName" label="项目名称"  align="center"></el-table-column>
             <el-table-column label="滞后节点"  align="center" >
               <template slot-scope="scope">
-                <p v-for="(item,i) in scope.row.DelayPoints" :key="i">
+                <p v-for="(item,i) in scope.row.DelayPoints" :key="i" style=" font-family: 'FangSong_GB2312';">
                   <span><span style="font-size: 18px">{{item.PointName}}</span> <span style="font-size: 18px">滞后</span> <u style="color: red;font-size: 18px">{{item.DelayDays}}</u> <span style="font-size: 18px">天</span>; </span>
                 </p>
               </template>
@@ -157,11 +159,12 @@
             </el-table-column>
           </el-table>
         </el-dialog>
-    <el-dialog :visible.sync="dialogVisible2" width="90%" style="padding: 0 0 ;!important">
+    <el-dialog :visible.sync="dialogVisible2"  style="padding: 0 0 ;!important" :fullscreen='true'>
+      <br><br><br><br><br><br>
       <div class="panel">
-        <el-table :data="tableDat2" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell"  border style="width: 100%;color: #000;font-family: 仿宋;font-size: 21px" class='tables' >
-          <el-table-column type="index" width="50" fixed style="font-family: '仿宋'"></el-table-column>
-          <el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList1' :key='index' v-if='item.IsColumn' style="font-family: '仿宋';height: 200px" >
+        <el-table :data="tableDat2" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell"  border style="width: 100%;color: #000;font-family: 'FangSong_GB2312';font-size: 21px" class='tables' >
+          <el-table-column type="index" width="50" fixed style="font-family: 'FangSong_GB2312';"></el-table-column>
+          <el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList1' :key='index' v-if='item.IsColumn' style="font-family: 'FangSong_GB2312';height: 200px" >
             <el-table-column :label="items.Caption"   v-for='(items,index) in item.Children' :key='index' v-if="item.MultiColumn" width='90'>
               <template slot-scope='scope'>
                 <div style="white-space:pre-line">{{getValue(scope.row,items.ColName)}}</div>
@@ -378,6 +381,7 @@
 					value: 2,
 					label: '逾期'
 				}],
+        allWork:'',
 				jindu: 1,
 				loading: false,
 				colList: [],
@@ -555,6 +559,7 @@
 			getdata(pagesizs, pages, search, grade, trade, owner, jindu,months) {
 				this.loading = true;
         this.DelayInfos = [];
+        this.allWork = [];
 				this.$post(Api.getdata, {
 					"PageSize": pagesizs,
 					"PageIndex": pages - 1,
@@ -573,8 +578,9 @@
 					if(res.state == 200) {
 						this.loading = false;
 						this.tableData5 = res.data.ReporDynlist.Data;
-						console.log("tb5",this.tableData5)
             this.formMsg = res.data.DataInfo;
+            console.log("formMsg",this.formMsg)
+            this.allWork = this.formMsg.DelayCount + this.formMsg.NormalCount + this.formMsg.StartCount
             this.formMsg.DelayInfos.forEach( res1 =>{
               this.DelayInfos.push(res1)
             });
@@ -590,8 +596,8 @@
 						for(var i = 4 ;i<res.data.ReportCols.length-5;i++){
 							this.recols.push(res.data.ReportCols[i])
 						}
-						this.colList1 = this.colList;
-            this.colList1.splice(18,8);
+						this.colList1 = this.colList.slice(0,18);
+
             console.log("col11111",this.colList1);
             console.log("col",this.colList);
 						console.log(this.recols)
