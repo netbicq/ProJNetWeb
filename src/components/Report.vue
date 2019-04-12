@@ -131,8 +131,8 @@
 				</el-dialog>
     <el-dialog title="" :visible.sync="msg" :fullscreen='true' :close-on-click-modal='false'>
       <div style="">
-        <br><br><br><br>
-        <p style="text-align: center;font-size: 64px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份金井湾片区前期项目推进情况通报</b></p><br><br>
+        <br>
+        <p style="margin:0 auto; width: 900px; text-align: center;font-size: 64px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份金井湾片区前期项目推进情况通报</b></p><br><br>
         <div style="font-family: 'FangSong_GB2312';font-size: 42px;margin-top: 14px;color: #000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ year }}年金井湾片区计划开工<u style="color: red">{{ allWork }}</u>个，截至{{ aMonth }}月份，已开工项目<u style="color: red">{{ formMsg.StartCount }}</u>个，正常推进项目<u style="color: red">{{ formMsg.NormalCount }}</u>个，推进滞后项目<u style="color: red">{{ formMsg.DelayCount }}</u>个。推进滞后项目分别为 <span v-for="(item, index) of formMsg.DeylayProje"><u style="color: red">{{ item }}</u><span v-if="index != formMsg.DeylayProje.length-1">、</span> </span>。</div>
       </div>
       <span slot="footer" class="dialog-footer" style="position:fixed; top: 90% ;right: 5%">
@@ -140,19 +140,19 @@
                 </span>
     </el-dialog>
 
-        <el-dialog title="" :visible.sync="dialogVisible1"  align="center" :fullscreen='true'>
+        <el-dialog title="" :visible.sync="dialogVisible1"  align="center" :fullscreen='true' style="color: black">
           <p style="text-align: center;font-size: 48px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份滞后项目情况一览表</b></p>
           <br><br><br>
-          <el-table :data="DelayInfos" class="tables"  style="font-size: 24px ;width: 70%" >
-            <el-table-column prop="ProjectName" label="项  目  名  称"  align="center" width="400px"></el-table-column>
+          <el-table :data="DelayInfos" class="tables"  style=" font-size: 24px ;width: 70%" :header-cell-style="{color:'#000'}">
+            <el-table-column prop="ProjectName" label="项  目  名  称"  align="center" width="200%"></el-table-column>
             <el-table-column label="滞  后  节  点"  align="center" >
               <template slot-scope="scope">
-                <p v-for="(item,i) in scope.row.DelayPoints" :key="i" style=" font-family: 'FangSong_GB2312';height: 35px" align="left">
-                  <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size: 22px">{{item.PointName}}</span> <span style="font-size: 22px">滞后</span> <u style="color: red;font-size: 22px">{{item.DelayDays}}</u> <span style="font-size: 22px">天</span>; </span>
+                <p v-for="(item,i) in scope.row.DelayPoints" :key="i" width="50%" style=" font-family: 'FangSong_GB2312';height: 35px" align="left">
+                  <span style="padding-left: 25%"><span style="font-size: 22px">{{item.PointName}}</span> <span style="font-size: 22px">滞后</span> <u style="color: red;font-size: 22px">{{item.DelayDays}}</u> <span style="font-size: 22px">天</span>; </span>
                 </p>
               </template>
             </el-table-column>
-           <el-table-column label="项  目  链  接"  align="center" width="200px">
+           <el-table-column label="项  目  链  接"  align="center" width="200%">
              <template slot-scope="scope">
                <el-button type="primary" size="mini" @click="detailsJump(scope.row.ProjectID)">详情</el-button>
              </template>
@@ -161,18 +161,17 @@
         </el-dialog>
     <el-dialog :visible.sync="dialogVisible2"  style="padding: 0 0 ;!important" :fullscreen='true'>
       <br><br><br><br><br><br>
-      <div class="panel">
-        <el-table :data="tableDat2" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell"  border style="width: 100%;color: #000;font-family: 'FangSong_GB2312';font-size: 21px" class='tables' >
-          <el-table-column type="index" width="50" fixed style="font-family: 'FangSong_GB2312';"></el-table-column>
-          <el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList1' :key='index' v-if='item.IsColumn' style="font-family: 'FangSong_GB2312';height: 200px" >
-            <el-table-column :label="items.Caption"   v-for='(items,index) in item.Children' :key='index' v-if="item.MultiColumn" width='90'>
+      <div class="panel" >
+        <el-table :data="tableDat2" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell"  border style="margin:0 auto; font-family: 'FangSong_GB2312';font-size: 18px" class='tables' :header-cell-style="{color:'#000'}">
+          <el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList1' :key='index' v-if='item.IsColumn' style="color: black; font-family: 'FangSong_GB2312';height: 200px ; " width="70%">
+            <el-table-column :label="items.Caption"   v-for='(items,index) in item.Children' :key='index' v-if="item.MultiColumn" style="color: black">
               <template slot-scope='scope'>
                 <div style="white-space:pre-line">{{getValue(scope.row,items.ColName)}}</div>
               </template>
             </el-table-column>
             <template slot-scope='scope' v-if="!(item.MultiColumn)">
               <div v-if='item.IsPoint'>
-                <div class="borderBottom  heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}">{{scope.row.PointData['sch_'+item.ColName]}}</div>
+                <div class="borderBottom  heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}" style="font-size: 12px">{{scope.row.PointData['sch_'+item.ColName]}}</div>
                 <div class="heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false }">{{scope.row.PointData['exc_'+item.ColName]}}</div>
               </div>
               <div v-else="">
@@ -596,7 +595,11 @@
 						for(var i = 4 ;i<res.data.ReportCols.length-5;i++){
 							this.recols.push(res.data.ReportCols[i])
 						}
-						this.colList1 = this.colList.slice(0,18);
+						let c1 = [];
+						let c2 = [];
+						c1 = this.colList.slice(0,3);
+            c2 = this.colList.slice(4,18);
+						this.colList1 = c1.concat(c2);
 
             console.log("col11111",this.colList1);
             console.log("col",this.colList);
@@ -727,6 +730,9 @@
 </script>
 
 <style scoped="">
+  /*.cell{*/
+    /*color: black;!important;*/
+  /*}*/
 	.borderBottom {
 		border-bottom: 1px solid #000;
 		/*background: red;*/
