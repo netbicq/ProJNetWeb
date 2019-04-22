@@ -143,12 +143,14 @@
         <el-dialog title="" :visible.sync="dialogVisible1"  align="center" :fullscreen='true' style="color: black">
           <p style="text-align: center;font-size: 48px;font-family: 'FZXiaoBiaoSong-B05S';color: #000;"><b>{{ monthTitle }}月份滞后项目情况一览表</b></p>
           <br><br><br>
-          <el-table :data="DelayInfos" class="tables"  style=" font-size: 24px ;width: 70%" :header-cell-style="{color:'#000'}">
-            <el-table-column prop="ProjectName" label="项  目  名  称"  align="center" width="200%"></el-table-column>
+          <el-table :data="DelayInfos" class="tables" :row-style="rowClass" style=" font-size: 24px ;width: 70%"  :header-cell-style="{color:'#000'}" >
+            <el-table-column prop="ProjectName" label="项  目  名  称"  align="center" width="200%" >
+              <template slot-scope="scope"> <span style="color: black">{{scope.row.ProjectName}}</span></template>
+            </el-table-column>
             <el-table-column label="滞  后  节  点"  align="center" >
               <template slot-scope="scope">
                 <p v-for="(item,i) in scope.row.DelayPoints" :key="i" width="50%" style=" font-family: 'FangSong_GB2312';height: 35px" align="left">
-                  <span style="padding-left: 25%"><span style="font-size: 22px">{{item.PointName}}</span> <span style="font-size: 22px">滞后</span> <u style="color: red;font-size: 22px">{{item.DelayDays}}</u> <span style="font-size: 22px">天</span>; </span>
+                  <span style="padding-left: 10%"><span style="font-size: 22px;color: black;">{{item.PointName}}</span> <span style="font-size: 22px;color: black;">滞后</span> <u style="color: red;font-size: 22px">{{item.DelayDays}}</u> <span style="font-size: 22px;color: black;">天</span>; </span>
                 </p>
               </template>
             </el-table-column>
@@ -159,29 +161,29 @@
             </el-table-column>
           </el-table>
         </el-dialog>
-    <el-dialog :visible.sync="dialogVisible2"  style="padding: 0 0 ;!important" :fullscreen='true'>
-      <br><br><br><br><br><br>
+    <el-dialog :visible.sync="dialogVisible2" :fullscreen='true'>
+      <br>
       <div class="panel" >
-        <el-table :data="tableDat2" resizable border :row-class-name="tableRowClassName" :cell-class-name="cell"  border style="margin:0 auto; font-family: 'FangSong_GB2312';font-size: 18px" class='tables' :header-cell-style="{color:'#000'}">
-          <el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList1' :key='index' v-if='item.IsColumn' style="color: black; font-family: 'FangSong_GB2312';height: 200px ; " width="70%">
-            <el-table-column :label="items.Caption"   v-for='(items,index) in item.Children' :key='index' v-if="item.MultiColumn" style="color: black">
+        <el-table :data="tableDat2" resizable :row-class-name="tableRowClassName" :cell-class-name="cell"  border style="margin:0 auto; font-family: 'FangSong_GB2312';font-size: 18px; width: 100%;" class='tables' :header-cell-style="{color:'#000'}">
+          <el-table-column :label="item.Caption" :fixed='item.ColumnFixed' v-for='(item,index) in colList1' :key='index' v-if='item.IsColumn'  style="margin: 0 auto; color: black; font-family: 'FangSong_GB2312';" :width="item.OrderIndex == 1001 ?'225':'100%'">
+            <el-table-column :label="items.Caption" border v-for='(items,index) in item.Children' :key='index' v-if="item.MultiColumn" style="color: black;" >
               <template slot-scope='scope'>
-                <div style="white-space:pre-line">{{getValue(scope.row,items.ColName)}}</div>
+                <div style="white-space:pre-line;">{{getValue(scope.row,items.ColName)}}</div>
               </template>
             </el-table-column>
             <template slot-scope='scope' v-if="!(item.MultiColumn)">
               <div v-if='item.IsPoint'>
-                <div class="borderBottom  heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}" style="font-size: 12px">{{scope.row.PointData['sch_'+item.ColName]}}</div>
-                <div class="heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false }">{{scope.row.PointData['exc_'+item.ColName]}}</div>
+                <div class="borderBottom  heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false}" style="font-size: 12px; color: black;">{{scope.row.PointData['sch_'+item.ColName]}}</div>
+                <div class="heightd" :class="{red:scope.row.PointData['tot_'+item.ColName]>0?true:false }" style="font-size: 12px;color: black;">{{scope.row.PointData['exc_'+item.ColName]}}</div>
               </div>
               <div v-else="">
                 <div v-if='item.Caption=="计划/实际"'>
                   <div class="borderBottom">计划</div>
                   <div>实际</div>
                 </div>
-                <div v-else="">
-                  <span v-if='item.ShowModal' class="spans" @click='qs(getValue(scope.row,item.ColName))'>{{getValue(scope.row,item.ColName)}}</span>
-                  <span v-else="">{{getValue(scope.row,item.ColName)}}</span>
+                <div>
+                  <span v-if='item.ShowModal' style="color: black;" class="spans" @click='qs(getValue(scope.row,item.ColName))'>{{getValue(scope.row,item.ColName)}}</span>
+                  <span v-else="" style="color: black;" >{{getValue(scope.row,item.ColName)}}</span>
                 </div>
               </div>
             </template>
@@ -395,6 +397,10 @@
 			}
 		},
 		computed : {
+      rowClass(row,index){
+        return{"height":"50px"}
+
+      },
 		    tableDat() {
 		       return this.tableData5.filter(item => item.isssum == true)
 		    },
@@ -597,9 +603,11 @@
 						}
 						let c1 = [];
 						let c2 = [];
+            let c3 = [];
 						c1 = this.colList.slice(0,3);
             c2 = this.colList.slice(4,18);
-						this.colList1 = c1.concat(c2);
+            c3 = this.colList.slice(21,22);
+						this.colList1 = c1.concat(c2,c3);
 
             console.log("col11111",this.colList1);
             console.log("col",this.colList);
@@ -742,4 +750,5 @@
 		display: block;
 		overflow: hidden;
 	}
+
 </style>

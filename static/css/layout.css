@@ -378,6 +378,7 @@ a {
 .tables .el-table__row .cell{
 	padding-left: 0;
 	padding-right: 0;
+  line-height: 30px;!important;
 }
 .tables .el-table__row .cell .heightd{
 	padding-left: 5px;
